@@ -25,7 +25,7 @@ services:
       - mongo
     # Set environment variable for MongoDB connection URI
     environment:
-      - MONGO_URI=mongodb://mongo:27017/your-db
+      - MONGO_URI=mongodb://mongo:27017/datapro
 
   # Frontend (client) service
   client:
