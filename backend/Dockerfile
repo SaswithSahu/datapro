@@ -1,5 +1,5 @@
-# Use an official Node.js runtime as the base image
-FROM node:14
+# Use the official Node.js 20 image
+FROM node:20
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -10,11 +10,11 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the backend source code
 COPY . .
 
-# Expose the port the app runs on
+# Expose port 5000
 EXPOSE 5000
 
-# Command to run the application
-CMD ["npm", "start"]
+# Command to run your Node.js server
+CMD ["node", "app.js"]

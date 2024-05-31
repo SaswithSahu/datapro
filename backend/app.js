@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+//const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const Enquiry = require('./model/Enquiry');
@@ -9,9 +10,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/datapro')
+mongoose.connect('mongodb://localhost:27017/datapro')
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
+//const uri = "mongodb+srv://Saswith:saswith@332@cluster0.kmv0i6e.mongodb.net/datapro?retryWrites=true&w=majority";
 
 
 app.post('/enquiries', async (req, res) => {
