@@ -17,25 +17,33 @@ class EnquirySlider extends React.Component {
   }
 
   moveSlider = () => {
-    this.currentIndex = (this.currentIndex + 1) % Math.ceil(this.props.enquiries.length / 3);
+    this.currentIndex = (this.currentIndex + 1) % Math.ceil(this.getCourseCounts().length / 3);
     this.sliderRef.current.style.transform = `translateX(-${this.currentIndex * 100}%)`;
   };
-  
-  render() {
-    const { enquiries } = this.props;
+
+  getCourseCounts = () => {
     const courseCounts = {};
     this.props.enquiries.forEach((enquiry) => {
       const { coursePreferred } = enquiry;
-      courseCounts[coursePreferred] = (courseCounts[coursePreferred] || 0) + 1;
+      courseCounts[coursePreferred.toUpperCase()] = (courseCounts[coursePreferred.toUpperCase()] || 0) + 1;
     });
+
+    return Object.keys(courseCounts).map((course) => ({
+      coursePreferred: course.toUpperCase(),
+      count: courseCounts[course.toUpperCase()],
+    }));
+  };
+
+  render() {
+    const courseCounts = this.getCourseCounts();
 
     return (
       <div className="enquiry-slider-container">
         <div className="enquiry-slider" ref={this.sliderRef}>
-          {enquiries.map((enquiry, index) => (
+          {courseCounts.map((course, index) => (
             <div className="enquiry-card" key={index}>
-              <h3 className="enquiry-card-title">{enquiry.coursePreferred}</h3>
-              <p className="enquiry-card-count">{`Count: ${courseCounts[enquiry.coursePreferred]}`}</p>
+              <h3 className="enquiry-card-title">{course.coursePreferred}</h3>
+              <p className="enquiry-card-count">{`Count: ${course.count}`}</p>
             </div>
           ))}
         </div>

@@ -4,6 +4,7 @@ import CenterHomePage from "./CenterHomePage"
 import {BrowserRouter,Route,Routes} from "react-router-dom"
 import Sidebar from "./Navbar"
 import EnquiryTable from "./EnquiryTable"
+import Centers from "./Centers"
 
 
 
@@ -15,7 +16,9 @@ const App = () =>{
       <Route path = "/" element = {<Home/>}/>
       <Route path = "/center-home" element = {<CenterHomePage/>}/>
       <Route path = "/navbar/:id" element = {<Sidebar/>}/>
-      <Route path = "/enquiry-table" element = {<EnquiryTable/>}/>
+      {/* <Route path = "/enquiry-table" element = {<EnquiryTable/>}/> */}
+      <Route path = "/centers" element = {<Centers/>}/>
+      <Route path = "/center/:id" element = {<EnquiryTable/>}/>
    </Routes>
   </BrowserRouter>
    

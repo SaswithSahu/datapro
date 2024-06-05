@@ -16,6 +16,7 @@
     width: 100%;
     border-collapse: collapse;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -37,6 +38,25 @@
 .table-row:hover {
     background-color: #f1f1f1;
     transition: background-color 0.3s;
+}
+.head-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.total-count{
+    font-weight: bolder;
+    font-size: 36px;
+    font-family: 'Times New Roman', Times, serif;
+    align-self: flex-end;
+    color:red
+}
+.center-name{
+    font-weight: bolder;
+    font-family: 'Times New Roman', Times, serif;
+    align-self: flex-end;
+    color:red
 }
 
 @keyframes fadeIn {
