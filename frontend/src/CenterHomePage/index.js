@@ -10,7 +10,7 @@ const CenterHomePage = () =>{
             </a>
             </nav>
             <div className="center-home-page-body">
-                <a href = "/enquiry-form" style={{textDecoration:"none",color:"black"}}>
+                <a href = "navbar/enquiry-form" style={{textDecoration:"none",color:"black"}}>
                     <div className="center-home-page-card shadow">
                         <IoPersonSharp className="center-home-page-card-logo"/>
                         <h1>Front Office</h1>

@@ -11,7 +11,7 @@ const Home = () =>{
             </a>
             </nav>
             <div className = "home-page-body">
-            <a href="/center-home"  style={{textDecoration:"none",color:"black"}}>
+            <a href="/ho-home"  style={{textDecoration:"none",color:"black"}}>
             <div className = "center-name-card">
                     <FaBuilding className="icon"/>
                     <h1>Head Office</h1>

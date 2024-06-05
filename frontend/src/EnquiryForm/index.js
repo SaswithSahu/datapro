@@ -4,7 +4,6 @@ import './index.css';
 const EnquiryForm = () => {
   const [formData, setFormData] = useState({
     place: '',
-    date: '',
     name: '',
     address: '',
     background: '',
@@ -31,7 +30,6 @@ const EnquiryForm = () => {
   const validate = () => {
     let tempErrors = {};
     if (!formData.place) tempErrors.place = 'Place is required';
-    if (!formData.date) tempErrors.date = 'Date is required';
     if (!formData.name) tempErrors.name = 'Name is required';
     if (!formData.address) tempErrors.address = 'Address is required';
     if (!formData.background) tempErrors.background = 'Background is required';
@@ -39,17 +37,16 @@ const EnquiryForm = () => {
       tempErrors.collegeSchool = 'College/School is required';
     if (!formData.mobile || !/^\d{10}$/.test(formData.mobile))
       tempErrors.mobile = 'Valid mobile number is required';
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
       tempErrors.email = 'Valid email is required';
     if (!formData.dob) tempErrors.dob = 'Date of Birth is required';
-    if (!formData.aadhar || !/^\d{12}$/.test(formData.aadhar))
+    if (formData.aadhar && !/^\d{12}$/.test(formData.aadhar))
       tempErrors.aadhar = 'Valid Aadhar number is required';
     if (!formData.coursePreferred)
       tempErrors.coursePreferred = 'Course Preferred is required';
     if (!formData.timePreferred)
       tempErrors.timePreferred = 'Time Preferred is required';
     if (!formData.source) tempErrors.source = 'Source is required';
-    if (!formData.courseFee) tempErrors.courseFee = 'Course Fee is required';
     if (!formData.counselorName)
       tempErrors.counselorName = 'Counselor Name is required';
     if (!formData.centerName) tempErrors.centerName = 'Center Name is required';
@@ -67,28 +64,41 @@ const EnquiryForm = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          mode:"cors",
+          mode: 'cors',
           body: JSON.stringify(formData),
         });
 
         if (!response.ok) {
           throw new Error('Failed to submit form data');
         }
+
         console.log('Form data submitted:', formData);
+        alert('Registered Successfully');
+        setFormData({
+          place: '',
+    name: '',
+    address: '',
+    background: '',
+    collegeSchool: '',
+    mobile: '',
+    email: '',
+    dob: '',
+    aadhar: '',
+    coursePreferred: '',
+    timePreferred: '',
+    source: '',
+    courseFee: '',
+    counselorName: '',
+    centerName: '',
+        })
       } catch (error) {
         console.error('Error submitting form data:', error.message);
+        alert('Failed to Register');
       }
     }
   };
 
   return (
-    <>
-    <nav className="navbar navbar-light" style={{marginLeft:"40px"}}>
-            <a class="navbar-brand" href="/">
-                <img src="https://media.licdn.com/dms/image/D560BAQFEeDUK_-l7Rg/company-logo_200_200/0/1681768294128/datapro_solutions_logo?e=2147483647&v=beta&t=VMnJz2SlaAxEm7jeVRC8VD_QLaCbsRANLH8G87RlKqQ" width="100" height="100" alt="home-logo"/>
-            </a>
-        </nav>
-
     <form onSubmit={handleSubmit} className="enquiry-form">
       <div className="form-group">
         <label>Place:</label>
@@ -99,16 +109,6 @@ const EnquiryForm = () => {
           onChange={handleChange}
         />
         {errors.place && <span className="error">{errors.place}</span>}
-      </div>
-      <div className="form-group">
-        <label>Date:</label>
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-        />
-        {errors.date && <span className="error">{errors.date}</span>}
       </div>
       <div className="form-group">
         <label>Name:</label>
@@ -282,7 +282,6 @@ const EnquiryForm = () => {
       </div>
       <button type="submit">Submit</button>
     </form>
-    </>
   );
 };
 

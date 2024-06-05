@@ -1,0 +1,56 @@
+.user-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .select-container,
+  .input-container,
+  .button-container {
+    margin-bottom: 10px;
+  }
+  
+  .select-option {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .input-field {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .fetch-button {
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .fetch-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .table-container {
+    margin-top: 20px;
+  }
+  
+  .user-details-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .user-details-table th,
+  .user-details-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .user-details-table th {
+    background-color: #f2f2f2;
+  }

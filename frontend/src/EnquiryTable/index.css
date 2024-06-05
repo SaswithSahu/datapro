@@ -1,0 +1,51 @@
+/* src/styles.css */
+.table-container {
+    padding: 20px;
+    margin: auto;
+    max-width: 1000px;
+}
+
+.table-title {
+    text-align: right;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.enquiry-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.enquiry-table th, .enquiry-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.enquiry-table th {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.table-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-row:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -8,7 +8,7 @@ const enquirySchema = new Schema({
   },
   date: {
     type: Date,
-    required: true
+    default: Date.now
   },
   name: {
     type: String,
@@ -34,7 +34,6 @@ const enquirySchema = new Schema({
   },
   email: {
     type: String,
-    required: true,
     match: /\S+@\S+\.\S+/
   },
   dob: {
@@ -43,7 +42,6 @@ const enquirySchema = new Schema({
   },
   aadhar: {
     type: String,
-    required: true,
     unique: true,
     match: /^[0-9]{12}$/
   },
@@ -62,8 +60,7 @@ const enquirySchema = new Schema({
     required: true
   },
   courseFee: {
-    type: String,
-    required: true
+    type: String
   },
   counselorName: {
     type: String,

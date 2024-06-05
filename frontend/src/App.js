@@ -2,7 +2,11 @@
 import Home from "./Home"
 import CenterHomePage from "./CenterHomePage"
 import {BrowserRouter,Route,Routes} from "react-router-dom"
-import EnquiryForm from "./EnquiryForm"
+import Sidebar from "./Navbar"
+import EnquiryTable from "./EnquiryTable"
+
+
+
 
 const App = () =>{
   return(
@@ -10,8 +14,8 @@ const App = () =>{
     <Routes>
       <Route path = "/" element = {<Home/>}/>
       <Route path = "/center-home" element = {<CenterHomePage/>}/>
-      <Route path = "/enquiry-form" element = {<EnquiryForm/>}/>
-
+      <Route path = "/navbar/:id" element = {<Sidebar/>}/>
+      <Route path = "/enquiry-table" element = {<EnquiryTable/>}/>
    </Routes>
   </BrowserRouter>
    
