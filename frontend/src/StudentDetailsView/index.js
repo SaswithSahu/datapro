@@ -19,7 +19,7 @@ const StudentDetailsView = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(`http://3.80.28.18:5000/student-details?${selectedOption}=${enteredValue}`);
+      const response = await fetch(`http://54.221.43.176:5000/student-details?${selectedOption}=${enteredValue}`);
       const data = await response.json();
       console.log(data)
       setUserDetails(data);
