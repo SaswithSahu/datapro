@@ -13,7 +13,7 @@ const EnquiryTable = () => {
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await fetch('http://54.221.43.176:5000/enquiries');
+            const response = await fetch('http://localhost:5000/enquiries');
             if (!response.ok) {
               throw new Error('Failed to fetch data');
             }

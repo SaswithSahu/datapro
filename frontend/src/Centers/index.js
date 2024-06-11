@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import './index.css';
+import './index.css'
 
 const Centers = () => {
   const [centers, setCenters] = useState([]);
-
+  const api = process.env.REACT_APP_API
+  console.log(api)
   useEffect(() => {
     const fetchCenters = async () => {
       try {
-        const response = await fetch('http://54.221.43.176:5000/enquiries');
+        const response = await fetch(`${api}/enquiries`);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
         const data = await response.json();
+        console.log(data)
         const centersMap = new Map();
         data.forEach((enquiry) => {
           const { centerName } = enquiry;

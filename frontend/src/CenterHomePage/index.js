@@ -22,6 +22,12 @@ const CenterHomePage = () =>{
                         <h1>Councillor</h1>
                     </div>
                 </a>
+                <a href = "/co" style={{textDecoration:"none",color:"black"}}>
+                    <div className="center-home-page-card shadow">
+                        <IoPersonSharp className="center-home-page-card-logo"/>
+                        <h1>Center<br/>Manager</h1>
+                    </div>
+                </a>
             </div>
         </div>
     )
