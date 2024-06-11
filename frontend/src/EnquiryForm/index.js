@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './index.css';
 
 const EnquiryForm = () => {
+  const api = process.env.REACT_APP_API
   const [formData, setFormData] = useState({
     place: '',
     name: '',
@@ -59,7 +60,7 @@ const EnquiryForm = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        const response = await fetch('http://localhost:5000/enquiries', {
+        const response = await fetch(`${api}/enquiries`,{
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

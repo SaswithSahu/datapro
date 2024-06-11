@@ -9,6 +9,7 @@ const ManagerRegistration = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const api = process.env.REACT_APP_API
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ const ManagerRegistration = () => {
     console.log(name,password);
 
     try {
-      const response = await fetch('http://localhost:5000/register-manager', {
+      const response = await fetch(`${api}/register-manager`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

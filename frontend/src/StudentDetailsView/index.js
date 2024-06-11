@@ -6,6 +6,7 @@ const StudentDetailsView = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [enteredValue, setEnteredValue] = useState('');
   const [userDetails, setUserDetails] = useState(null);
+  const api = process.env.REACT_APP_API
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -19,7 +20,7 @@ const StudentDetailsView = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/student-details?${selectedOption}=${enteredValue}`);
+      const response = await fetch(`${api}/student-details?${selectedOption}=${enteredValue}`);
       const data = await response.json();
       console.log(data)
       setUserDetails(data);

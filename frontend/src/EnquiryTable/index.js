@@ -6,14 +6,14 @@ import EnquirySlider from '../EnquirySlider';
 
 const EnquiryTable = () => {
     const {id} = useParams()
-    console.log(id)
+   
     const [enquiries, setEnquiries] = useState([]);
-    
+    const api = process.env.REACT_APP_API
    
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await fetch('http://localhost:5000/enquiries');
+            const response = await fetch(`${api}/enquiries`);
             if (!response.ok) {
               throw new Error('Failed to fetch data');
             }

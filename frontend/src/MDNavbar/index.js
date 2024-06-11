@@ -1,12 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import StudentDetailsView from '../StudentDetailsView';
+//import StudentDetailsView from '../StudentDetailsView';
 import Centers from '../Centers';
 import ManagerRegistration from '../ManagerRegistration';
 
 const MDSidebar = () => {
     const {id} = useParams()
-    console.log(id)
+  
     return (
         <div className="container-fluid" style={{height:"100vh"}}>
             <div className="row flex-nowrap">
