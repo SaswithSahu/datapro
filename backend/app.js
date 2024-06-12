@@ -37,7 +37,7 @@ app.post('/enquiries', async (req, res) => {
       centerName
     } = req.body;
 
-    const newEnquiry = new Enquiry({
+    const enquiryData = {
       place,
       name,
       address,
@@ -53,7 +53,16 @@ app.post('/enquiries', async (req, res) => {
       courseFee,
       counselorName,
       centerName
+    };
+
+    // Remove undefined fields
+    Object.keys(enquiryData).forEach((key) => {
+      if (enquiryData[key] === undefined) {
+        delete enquiryData[key];
+      }
     });
+
+    const newEnquiry = new Enquiry(enquiryData);
 
     const savedEnquiry = await newEnquiry.save();
 

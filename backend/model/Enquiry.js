@@ -29,7 +29,6 @@ const enquirySchema = new Schema({
   mobile: {
     type: String,
     required: true,
-    unique: true,
     match: /^[0-9]{10}$/
   },
   email: {
@@ -42,8 +41,7 @@ const enquirySchema = new Schema({
   },
   aadhar: {
     type: String,
-    unique: true,
-    match: /^[0-9]{12}$/
+    sparse: true
   },
   coursePreferred: {
     type: String,

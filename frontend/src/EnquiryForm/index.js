@@ -38,11 +38,11 @@ const EnquiryForm = () => {
       tempErrors.collegeSchool = 'College/School is required';
     if (!formData.mobile || !/^\d{10}$/.test(formData.mobile))
       tempErrors.mobile = 'Valid mobile number is required';
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
-      tempErrors.email = 'Valid email is required';
+    // if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
+    //   tempErrors.email = 'Valid email is required';
     if (!formData.dob) tempErrors.dob = 'Date of Birth is required';
-    if (formData.aadhar && !/^\d{12}$/.test(formData.aadhar))
-      tempErrors.aadhar = 'Valid Aadhar number is required';
+    // if (formData.aadhar && !/^\d{12}$/.test(formData.aadhar))
+    //   tempErrors.aadhar = 'Valid Aadhar number is required';
     if (!formData.coursePreferred)
       tempErrors.coursePreferred = 'Course Preferred is required';
     if (!formData.timePreferred)
@@ -60,38 +60,44 @@ const EnquiryForm = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        const response = await fetch(`${api}/enquiries`,{
+        // Filter out empty fields from the form data
+        const filteredFormData = Object.fromEntries(
+          Object.entries(formData).filter(([key, value]) => value.trim() !== '')
+        );
+  
+        const response = await fetch(`${api}/enquiries`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           mode: 'cors',
-          body: JSON.stringify(formData),
+          body: JSON.stringify(filteredFormData),
         });
-
+  
         if (!response.ok) {
           throw new Error('Failed to submit form data');
         }
-
-        console.log('Form data submitted:', formData);
+  
+        console.log('Form data submitted:', filteredFormData);
         alert('Registered Successfully');
+        // Clear form data after successful submission
         setFormData({
           place: '',
-    name: '',
-    address: '',
-    background: '',
-    collegeSchool: '',
-    mobile: '',
-    email: '',
-    dob: '',
-    aadhar: '',
-    coursePreferred: '',
-    timePreferred: '',
-    source: '',
-    courseFee: '',
-    counselorName: '',
-    centerName: '',
-        })
+          name: '',
+          address: '',
+          background: '',
+          collegeSchool: '',
+          mobile: '',
+          email: '',
+          dob: '',
+          aadhar: '',
+          coursePreferred: '',
+          timePreferred: '',
+          source: '',
+          courseFee: '',
+          counselorName: '',
+          centerName: '',
+        });
       } catch (error) {
         console.error('Error submitting form data:', error.message);
         alert('Failed to Register');
