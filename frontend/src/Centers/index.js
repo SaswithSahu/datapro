@@ -38,7 +38,6 @@ const Centers = () => {
           <p className="total-enquiries">{`Total Enquiries: ${totalEnquiries}`}</p>
         </div>
     </a>
-        
       ))}
     </div>
   );

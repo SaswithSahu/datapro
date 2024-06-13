@@ -66,7 +66,7 @@ const enquirySchema = new Schema({
   },
   centerName: {
     type: String,
-    enum: ['DWK', 'MVP'],
+    enum: ['DWK', 'MVP','GWK'],
     required: true
   }
 }, { timestamps: true });

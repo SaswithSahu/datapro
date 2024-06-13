@@ -25,6 +25,10 @@ const MDSidebar = () => {
                                 <a href="/md-navbar/register-managers" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Register Managers</span> </a>
                             </li>
+                            <li>
+                                <a href="#/" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Dashboard</span> </a>
+                            </li>
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">

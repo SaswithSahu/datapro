@@ -284,6 +284,7 @@ const EnquiryForm = () => {
           <option value="">Select</option>
           <option value="DWK">DWK</option>
           <option value="MVP">MVP</option>
+          <option value="GWK">GWK</option>
         </select>
         {errors.centerName && <span className="error">{errors.centerName}</span>}
       </div>

@@ -28,6 +28,12 @@ const Home = () =>{
                     <h1>MVP</h1>
                 </div>
             </a>
+            <a href = "/center-home" style={{textDecoration:"none",color:"black"}}>
+            <div className = "center-name-card">
+                <FaBuilding className="icon"/>
+                    <h1>GWK</h1>
+                </div>
+            </a>
             </div>
         </div>
     )
