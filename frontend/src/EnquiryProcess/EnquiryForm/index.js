@@ -19,6 +19,8 @@ const EnquiryForm = () => {
     courseFee: '',
     counselorName: '',
     centerName: '',
+    status:"joined",
+    remarks:""
   });
 
   const [errors, setErrors] = useState({});
@@ -97,6 +99,7 @@ const EnquiryForm = () => {
           courseFee: '',
           counselorName: '',
           centerName: '',
+          remarks:""
         });
       } catch (error) {
         console.error('Error submitting form data:', error.message);
@@ -248,6 +251,8 @@ const EnquiryForm = () => {
           <option value="relatives">Relatives</option>
           <option value="datapro-students">Datapro Students</option>
           <option value="newspaper">News Paper</option>
+          <option value="direct-walk-in">Direct Walk-in</option>
+          <option value="telecalling">Telecalling</option>
           <option value="others">Others</option>
         </select>
         {errors.source && <span className="error">{errors.source}</span>}
@@ -287,6 +292,28 @@ const EnquiryForm = () => {
           <option value="GWK">GWK</option>
         </select>
         {errors.centerName && <span className="error">{errors.centerName}</span>}
+      </div>
+      <div className="form-group">
+        <label>Status:</label>
+        <select
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+        >
+          <option value="joined">Joined</option>
+          <option value="notJoined">Not Joined</option>
+        </select>
+      </div>
+      <div className="form-group">
+        <label>Remarks:</label>
+        <textarea
+          type="text"
+          name="remarks"
+          cols={70}
+          rows={10}
+          value={formData.remarks}
+          onChange={handleChange}
+        />
       </div>
       <button type="submit">Submit</button>
     </form>

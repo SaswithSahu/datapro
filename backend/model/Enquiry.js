@@ -54,7 +54,7 @@ const enquirySchema = new Schema({
   },
   source: {
     type: String,
-    enum: ['friends', 'relatives', 'datapro-students', 'newspaper', 'others'],
+    enum: ['friends', 'relatives', 'datapro-students', 'newspaper','direct-walk-in','telecalling', 'others'],
     required: true
   },
   courseFee: {
@@ -68,7 +68,15 @@ const enquirySchema = new Schema({
     type: String,
     enum: ['DWK', 'MVP','GWK'],
     required: true
-  }
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  remarks: {
+    type: String,
+  },
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Enquiry', enquirySchema);

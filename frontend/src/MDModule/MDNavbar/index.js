@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 //import StudentDetailsView from '../StudentDetailsView';
-import Centers from '../Centers';
+import Centers from '../../Centers';
 import ManagerRegistration from '../ManagerRegistration';
 
 const MDSidebar = () => {

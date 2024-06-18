@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 //const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const Enquiry = require('./model/Enquiry');
+const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 
 const app = express();
@@ -34,7 +36,9 @@ app.post('/enquiries', async (req, res) => {
       source,
       courseFee,
       counselorName,
-      centerName
+      centerName,
+      status,
+      remarks
     } = req.body;
 
     const enquiryData = {
@@ -52,7 +56,9 @@ app.post('/enquiries', async (req, res) => {
       source,
       courseFee,
       counselorName,
-      centerName
+      centerName,
+      status,
+      remarks
     };
 
     // Remove undefined fields
@@ -111,20 +117,57 @@ app.get('/enquiries', async (req, res) => {
 
 app.post('/register-manager', async (req, res) => {
   const { name, password, center } = req.body;
+ 
+  
+  if (!name || !password || !center) {
+    return res.status(400).json({ error: 'Name, password, and center are required.' });
+  }
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed Password:', hashedPassword);
+    
     const newManager = new Manager({
       name,
-      password,
+      password: hashedPassword,
       center
     });
-    await newManager.save();
 
-    res.status(201).json({ message: 'Employee registered successfully' });
+    await newManager.save();
+    console.log('Manager saved successfully:', newManager);
+
+    res.status(201).json({ message: 'Manager registered successfully' });
   } catch (error) {
+    console.error('Error in /register-manager:', error);
     res.status(500).json({ error: 'Failed to register. Please try again.' });
   }
 });
+
+app.post('/manager-login', async (req, res) => {
+  const { username, password } = req.body;
+  console.log(req.body);
+
+  try {
+    const manager = await Manager.findOne({ name:username});
+    console.log(manager);
+
+    if (!manager) {
+      return res.status(401).json({ error: 'Invalid name or password' });
+    }
+    const isMatch = await bcrypt.compare(password, manager.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid name or password' });
+    }
+
+    const token = jwt.sign({ id: manager._id, center: manager.center }, "jwt-secret", { expiresIn: '1h' });
+
+    res.status(200).json({ token, center: manager.center });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to login. Please try again.' });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
