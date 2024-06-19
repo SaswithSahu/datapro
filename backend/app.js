@@ -1,10 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-//const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const Enquiry = require('./model/Enquiry');
+const Admission = require("./model/Admission");
 const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 
@@ -13,10 +14,19 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors("*"));
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
 mongoose.connect('mongodb+srv://saswith:saswith@cluster0.rtqlfvi.mongodb.net/datapro')
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
-//const uri = "mongodb+srv://Saswith:saswith@332@cluster0.kmv0i6e.mongodb.net/datapro?retryWrites=true&w=majority";
 
 
 app.post('/enquiries', async (req, res) => {
@@ -168,7 +178,6 @@ app.post('/manager-login', async (req, res) => {
   }
 });
 
-
 app.get('/getDetails', async (req, res) => {
   const { mobile } = req.query;
 
@@ -190,6 +199,57 @@ app.get('/getDetails', async (req, res) => {
   }
 });
 
+app.post('/admissions', upload.single('image'), async (req, res) => {
+  try {
+    const {
+      IDNO, centerName, name, gender, address, aadharNo,
+      mobileNo, email, others, courseEnrolled, dateOfJoining,
+      totalFees, durationOfCourse, feeDueDate, trainer,timings
+    } = req.body;
+
+    const newAdmission = new Admission({
+      IDNO,
+      centerName,
+      name,
+      gender,
+      image: req.file.path, // Path to the uploaded image
+      address,
+      aadharNo,
+      mobileNo,
+      email,
+      others,
+      courseEnrolled,
+      dateOfJoining,
+      totalFees,
+      durationOfCourse,
+      feeDueDate,
+      trainer,
+      timings
+    });
+
+    const savedAdmission = await newAdmission.save();
+    const {enrolledId} = req.body
+    console.log(enrolledId);
+    if(enrolledId !== null){
+      console.log("Enter")
+      await Enquiry.findByIdAndUpdate(enrolledId, { status: 'joined' });
+    }
+    res.status(201).json(savedAdmission);
+
+  } catch (error) {
+    console.error('Error creating admission entry:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/admissions', async (req, res) => {
+  try {
+      const admission = await Admission.find({});
+      res.status(200).json(admission);
+  } catch (err) {
+      res.status(500).json({ message: 'Error fetching enquiries', error: err });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

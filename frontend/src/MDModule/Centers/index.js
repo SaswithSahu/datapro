@@ -5,6 +5,7 @@ const Centers = () => {
   const [centers, setCenters] = useState([]);
   const api = process.env.REACT_APP_API
   console.log(api)
+  
   useEffect(() => {
     const fetchCenters = async () => {
       try {

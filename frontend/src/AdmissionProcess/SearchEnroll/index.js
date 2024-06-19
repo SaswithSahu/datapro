@@ -21,6 +21,7 @@ const SearchEnroll = () => {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
+      console.log(result);
       setData(result);
     } catch (err) {
       setError('Failed to retrieve data. Please try again.');
@@ -30,8 +31,7 @@ const SearchEnroll = () => {
   };
 
   const handleEnroll = (id) => {
-    navigate("/admission-process/form")
-    console.log(`Enroll clicked for ID: ${id}`);
+    navigate(`/enquiry-admission/${id}`)
   };
 
   return (
@@ -61,12 +61,12 @@ const SearchEnroll = () => {
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.id}>
+              <tr key={item._id}>
                 <td>{data.indexOf(item) + 1}</td>
                 <td>{item.name}</td>
                 <td>{item.address}</td>
                 <td>
-                  <button className="enroll-button" onClick={() => handleEnroll(item.id)}>
+                  <button className="enroll-button" onClick={() => handleEnroll(item._id)}>
                     Enroll
                   </button>
                 </td>

@@ -1,12 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 //import StudentDetailsView from '../StudentDetailsView';
-import Centers from '../../Centers';
+import Centers from '../Centers';
 import ManagerRegistration from '../ManagerRegistration';
+import EnquiresAndAdmissions from '../EnquiresAndAdmissions';
 
 const MDSidebar = () => {
     const {id} = useParams()
-  
     return (
         <div className="container-fluid" style={{height:"100vh"}}>
             <div className="row flex-nowrap">
@@ -18,17 +18,18 @@ const MDSidebar = () => {
                         <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                             <li className="nav-item">
                                 <a href="/md-navbar/centers" className="nav-link align-middle px-0">
-                                    <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Centers</span>
+                                    <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Enquiries</span>
                                 </a>
+                            </li>
+                            <li>
+                                <a href="/md-navbar/admissions" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Admissions</span> </a>
                             </li>
                             <li>
                                 <a href="/md-navbar/register-managers" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Register Managers</span> </a>
                             </li>
-                            <li>
-                                <a href="#/" className="nav-link px-0 align-middle">
-                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Dashboard</span> </a>
-                            </li>
+                            
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
@@ -51,6 +52,7 @@ const MDSidebar = () => {
                 <div className="col py-3" style={{height:"100vh",overflow:"auto"}}>
                  {id === 'centers' && <Centers/>}
                  {id === 'register-managers' && <ManagerRegistration/>}
+                 {id === 'admissions' && <EnquiresAndAdmissions/>}
                 </div>
             </div>
         </div>

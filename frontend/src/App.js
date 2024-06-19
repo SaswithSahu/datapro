@@ -4,12 +4,13 @@ import CenterHomePage from "./CenterHomePage"
 import {BrowserRouter,Route,Routes} from "react-router-dom"
 import Sidebar from "./EnquiryProcess/Navbar"
 import EnquiryTable from "./EnquiryTable"
-import Centers from "./Centers"
+import Centers from "./MDModule/Centers"
 import MDSidebar from "./MDModule/MDNavbar"
 import HoHomePage from "./HOHomePage"
 import Login from "./Login"
 import AdmissionSidebar from "./AdmissionProcess/SideBar"
-import SearchEnroll from "./AdmissionProcess/SearchEnroll"
+import AdmissionForm from "./AdmissionProcess/Form"
+import EnquiresAndAdmissions from "./MDModule/EnquiresAndAdmissions"
 
 
 const App = () =>{
@@ -26,6 +27,8 @@ const App = () =>{
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
       <Route path = "/login" element = {<Login/>}/>
       <Route path = "/admission-process/:id" element = {<AdmissionSidebar/>}/>
+      <Route path = "/enquiry-admission/:id" element = {<AdmissionForm/>}/>
+      
    </Routes>
   </BrowserRouter>
    
