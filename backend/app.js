@@ -169,5 +169,27 @@ app.post('/manager-login', async (req, res) => {
 });
 
 
+app.get('/getDetails', async (req, res) => {
+  const { mobile } = req.query;
+
+  if (!mobile) {
+    return res.status(400).json({ error: 'Mobile number is required' });
+  }
+
+  try {
+    const enquiries = await Enquiry.find({ mobile });
+
+    if (enquiries.length === 0) {
+      return res.status(404).json({ error: 'No data found for the provided mobile number' });
+    }
+
+    res.json(enquiries);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

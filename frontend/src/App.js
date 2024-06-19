@@ -9,6 +9,7 @@ import MDSidebar from "./MDModule/MDNavbar"
 import HoHomePage from "./HOHomePage"
 import Login from "./Login"
 import AdmissionSidebar from "./AdmissionProcess/SideBar"
+import SearchEnroll from "./AdmissionProcess/SearchEnroll"
 
 
 const App = () =>{
