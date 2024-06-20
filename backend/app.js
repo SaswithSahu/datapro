@@ -204,15 +204,15 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
     const {
       IDNO, centerName, name, gender, address, aadharNo,
       mobileNo, email, others, courseEnrolled, dateOfJoining,
-      totalFees, durationOfCourse, feeDueDate, trainer,timings
+      totalFees, durationOfCourse, feeDueDate, trainer, timings, enrolledId
     } = req.body;
 
-    const newAdmission = new Admission({
+    // Prepare the new admission object
+    const newAdmissionData = {
       IDNO,
       centerName,
       name,
       gender,
-      image: req.file.path, // Path to the uploaded image
       address,
       aadharNo,
       mobileNo,
@@ -225,15 +225,21 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
       feeDueDate,
       trainer,
       timings
-    });
+    };
+
+    if (req.file) {
+      newAdmissionData.image = req.file.path;
+    }
+
+    const newAdmission = new Admission(newAdmissionData);
 
     const savedAdmission = await newAdmission.save();
-    const {enrolledId} = req.body
-    console.log(enrolledId);
-    if(enrolledId !== null){
-      console.log("Enter")
+
+    if (enrolledId !== null) {
+      console.log("Enter");
       await Enquiry.findByIdAndUpdate(enrolledId, { status: 'joined' });
     }
+
     res.status(201).json(savedAdmission);
 
   } catch (error) {
@@ -241,6 +247,7 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 app.get('/admissions', async (req, res) => {
   try {

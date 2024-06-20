@@ -86,7 +86,7 @@ const AdmissionForm = () => {
 
         <div className="form-group">
           <label htmlFor="image">Image*</label>
-          <input type="file" id="image" className="input-field" {...register('image', { required: true })} />
+          <input type="file" id="image" className="input-field" {...register('image')} />
           {errors.image && <span className="error">Image is required</span>}
         </div>
 
@@ -110,13 +110,13 @@ const AdmissionForm = () => {
 
         <div className="form-group">
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" className="input-field" {...register('email', { required: true })} />
+          <input type="email" id="email" className="input-field" {...register('email')} />
           {errors.email && <span className="error">Email is required</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="group">Group/College/Occupation/Others</label>
-          <input type="text" id="group" className="input-field" {...register('group', { required: true })} />
+          <input type="text" id="group" className="input-field" {...register('group')} />
           {errors.group && <span className="error">This field is required</span>}
         </div>
 

@@ -21,7 +21,6 @@ const admissionSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true
   },
   address: {
     type: String,
@@ -37,7 +36,6 @@ const admissionSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
   },
   others: {
     type: String,
