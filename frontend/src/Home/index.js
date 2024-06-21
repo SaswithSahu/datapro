@@ -16,19 +16,19 @@ const Home = () =>{
                     <h1>Head Office</h1>
                 </div>
             </a>
-            <a href = "/center-home"  style={{textDecoration:"none",color:"black"}}>
+            <a href = "/center-home/DWK"  style={{textDecoration:"none",color:"black"}}>
             <div className = "center-name-card">
                 <FaBuilding className="icon"/>
                     <h1>DWK</h1>
                 </div>
             </a>
-            <a href = "/center-home" style={{textDecoration:"none",color:"black"}}>
+            <a href = "/center-home/MVP" style={{textDecoration:"none",color:"black"}}>
             <div className = "center-name-card">
                 <FaBuilding className="icon"/>
                     <h1>MVP</h1>
                 </div>
             </a>
-            <a href = "/center-home" style={{textDecoration:"none",color:"black"}}>
+            <a href = "/center-home/GWK" style={{textDecoration:"none",color:"black"}}>
             <div className = "center-name-card">
                 <FaBuilding className="icon"/>
                     <h1>GWK</h1>

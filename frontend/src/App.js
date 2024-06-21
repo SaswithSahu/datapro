@@ -7,10 +7,14 @@ import EnquiryTable from "./EnquiryTable"
 import Centers from "./MDModule/Centers"
 import MDSidebar from "./MDModule/MDNavbar"
 import HoHomePage from "./HOHomePage"
-import Login from "./Login"
+import Login from "./CenterManagers/Login"
 import AdmissionSidebar from "./AdmissionProcess/SideBar"
 import AdmissionForm from "./AdmissionProcess/Form"
-import EnquiresAndAdmissions from "./MDModule/EnquiresAndAdmissions"
+import RegisterEmployees from "./CenterManagers/RegisterEmployes"
+import CMSidebar from "./CenterManagers/CMNavBar"
+import EmployeeLoginForm from "./EmployeeLoginForm"
+import EmployeeList from "./CenterManagers/EmployeeList"
+
 
 
 const App = () =>{
@@ -18,17 +22,17 @@ const App = () =>{
   <BrowserRouter>
     <Routes>
       <Route path = "/" element = {<Home/>}/>
-      <Route path = "/center-home" element = {<CenterHomePage/>}/>
+      <Route path = "/center-home/:id" element = {<CenterHomePage/>}/>
       <Route path = "/ho-home" element = {<HoHomePage/>}/>
-      <Route path = "/navbar/:id" element = {<Sidebar/>}/>
-      {/* <Route path = "/enquiry-table" element = {<EnquiryTable/>}/> */}
-      <Route path = "/centers" element = {<Centers/>}/>
       <Route path = "/center/:id" element = {<EnquiryTable/>}/>
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
-      <Route path = "/login" element = {<Login/>}/>
+      <Route path = "/manager-login" element = {<Login/>}/>
+    
+      <Route path = "/login/:id" element = {<EmployeeLoginForm/>}/>
+      <Route path = "/cm-navbar/:id" element = {<CMSidebar/>}/>
       <Route path = "/admission-process/:id" element = {<AdmissionSidebar/>}/>
-      <Route path = "/enquiry-admission/:id" element = {<AdmissionForm/>}/>
-      
+      <Route path = "/navbar/:id" element = {<Sidebar/>}/>
+      <Route path = "/demo" element = {<EmployeeList/>}/>
    </Routes>
   </BrowserRouter>
    

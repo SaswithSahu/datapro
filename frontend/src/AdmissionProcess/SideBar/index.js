@@ -1,14 +1,26 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-
-import StudentDetailsView from "../../EnquiryProcess/StudentDetailsView";                                              
+import React,{ useEffect } from 'react';
+import { useParams,useNavigate } from 'react-router-dom';
+                                           
 
 import AdmissionForm from '../Form';
 import SearchEnroll from '../SearchEnroll';
 
 const AdmissionSidebar = () => {
     const {id} = useParams()
-    console.log(id)
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const jwtToken = localStorage.getItem("jwt_token");
+        if (!jwtToken) {
+            navigate("/");
+        }
+    }, [navigate]);
+
+    const logOut = () =>{
+        localStorage.removeItem("jwt_token")
+        localStorage.removeItem("center")
+        navigate("/")
+    }
     return (
         <div className="container-fluid" style={{height:"100vh"}}>
             <div className="row flex-nowrap">
@@ -30,7 +42,7 @@ const AdmissionSidebar = () => {
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
-                           
+                           <button onClick={logOut}>Logout</button>
                         </div>
                     </div>
                 </div>

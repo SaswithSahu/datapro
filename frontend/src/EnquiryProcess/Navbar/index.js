@@ -1,11 +1,23 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React,{useEffect} from 'react';
+import { useParams,useNavigate} from 'react-router-dom';
 import EnquiryForm from '../EnquiryForm';
 import StudentDetailsView from '../StudentDetailsView';
 
 const Sidebar = () => {
     const {id} = useParams()
+    const navigate = useNavigate();
+    useEffect(() => {
+        const jwtToken = localStorage.getItem("jwt_token");
+        if (!jwtToken) {
+            navigate("/");
+        }
+    }, [navigate]);
     console.log(id)
+    const logOut = () =>{
+        localStorage.removeItem("jwt_token")
+        localStorage.removeItem("center")
+        navigate("/")
+    }
     return (
         <div className="container-fluid" style={{height:"100vh"}}>
             <div className="row flex-nowrap">
@@ -27,19 +39,7 @@ const Sidebar = () => {
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
-                            <a href="/" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" className="rounded-circle" />
-                                <span className="d-none d-sm-inline mx-1">loser</span>
-                            </a>
-                            <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                                <li><a className="dropdown-item" href="/">New project...</a></li>
-                                <li><a className="dropdown-item" href="/">Settings</a></li>
-                                <li><a className="dropdown-item" href="/">Profile</a></li>
-                                <li>
-                                    <hr className="dropdown-divider" />
-                                </li>
-                                <li><a className="dropdown-item" href="/">Sign out</a></li>
-                            </ul>
+                        <button onClick={logOut}>Logout</button>
                         </div>
                     </div>
                 </div>

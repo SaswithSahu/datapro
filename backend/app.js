@@ -8,6 +8,7 @@ const Enquiry = require('./model/Enquiry');
 const Admission = require("./model/Admission");
 const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
+const Employee = require('./model/Employee');
 
 const app = express();
 
@@ -28,6 +29,17 @@ mongoose.connect('mongodb+srv://saswith:saswith@cluster0.rtqlfvi.mongodb.net/dat
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
 
+
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) return res.status(401).send('Access Denied: No Token Provided');
+
+  jwt.verify(token, "jwt-secret", (err, user) => {
+      if (err) return res.status(403).send('Invalid Token');
+      req.user = user;
+      next();
+  });
+};
 
 app.post('/enquiries', async (req, res) => {
   try {
@@ -154,7 +166,7 @@ app.post('/register-manager', async (req, res) => {
 });
 
 app.post('/manager-login', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password,center } = req.body;
   console.log(req.body);
 
   try {
@@ -168,6 +180,9 @@ app.post('/manager-login', async (req, res) => {
 
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid name or password' });
+    }
+    if(manager.center !== center){
+      return res.status(401).json({ error: 'Invalid center' });
     }
 
     const token = jwt.sign({ id: manager._id, center: manager.center }, "jwt-secret", { expiresIn: '1h' });
@@ -248,7 +263,6 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
   }
 });
 
-
 app.get('/admissions', async (req, res) => {
   try {
       const admission = await Admission.find({});
@@ -258,5 +272,68 @@ app.get('/admissions', async (req, res) => {
   }
 });
 
+app.post('/register-employee', authenticateToken,async (req, res) => {
+  const { username, password, role } = req.body;
+
+  try {
+
+    const center = req.user.center;
+    console.log(center)
+      const existingEmployee = await Employee.findOne({ username });
+      if (existingEmployee) {
+          return res.status(400).send('Username already exists');
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newEmployee = new Employee({
+          username,
+          password: hashedPassword,
+          role,
+          center
+      });
+
+      await newEmployee.save();
+      res.status(201).send('Employee registered successfully');
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Server error');
+  }
+});
+
+app.post('/login-employee', async (req, res) => {
+  const { username, password, center, role } = req.body;
+  try {
+      const user = await Employee.findOne({ username });
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (!passwordMatch) {
+          return res.status(401).json({ message: 'Invalid password' });
+      }
+
+      if (user.center !== center || user.role !== role) {
+          return res.status(401).json({ message: 'Invalid center or role' });
+      }
+
+      const token = jwt.sign({ id: user._id, center: user.center, role: user.role }, "jwt-secret", { expiresIn: '1h' });
+
+      res.status(200).json({ token });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.get("/employees",async(req, res) => {
+  try{
+    const employees = await Employee.find({})
+    console.log(employees);
+    res.status(200).json({ employees });
+  }catch(e){
+    res.status(501).json({ "message": e });
+  }
+})
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

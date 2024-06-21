@@ -10,7 +10,7 @@ const HoHomePage = () => {
                 </a>
             </nav>
             <div className="ho-home-page-body">
-                <a href="/md-navbar/centers" style={{textDecoration:"none",color:"black"}}>
+                <a href="/manager-login" style={{textDecoration:"none",color:"black"}}>
                     <div className="ho-home-page-card shadow">
                         <IoPersonSharp className="ho-home-page-card-logo"/>
                         <h1>Managing<br/>Directors</h1>

@@ -1,7 +1,10 @@
 
 import "./index.css"
 import { IoPersonSharp } from "react-icons/io5";
+import { useParams } from "react-router-dom";
 const CenterHomePage = () =>{
+    const {id} = useParams();
+    localStorage.setItem("center", id);
     return(
         <div className="center-home-page">
              <nav className="navbar navbar-light" style={{marginLeft:"40px"}}>
@@ -10,19 +13,19 @@ const CenterHomePage = () =>{
             </a>
             </nav>
             <div className="center-home-page-body">
-                <a href = "navbar/enquiry-form" style={{textDecoration:"none",color:"black"}}>
+                <a href = {`/login/FrontOffice`} style={{textDecoration:"none",color:"black"}}>
                     <div className="center-home-page-card shadow">
                         <IoPersonSharp className="center-home-page-card-logo"/>
                         <h1>Front Office</h1>
                     </div>
                 </a>
-                <a href = "/admission-process/form" style={{textDecoration:"none",color:"black"}}>
+                <a href = "/login/Councillor" style={{textDecoration:"none",color:"black"}}>
                     <div className="center-home-page-card shadow">
                         <IoPersonSharp className="center-home-page-card-logo"/>
                         <h1>Councillor</h1>
                     </div>
                 </a>
-                <a href = "/login" style={{textDecoration:"none",color:"black"}}>
+                <a href = "/manager-login" style={{textDecoration:"none",color:"black"}}>
                     <div className="center-home-page-card shadow">
                         <IoPersonSharp className="center-home-page-card-logo"/>
                         <h1>Center<br/>Manager</h1>
