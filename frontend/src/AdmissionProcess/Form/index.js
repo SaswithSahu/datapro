@@ -1,13 +1,14 @@
 // AdmissionForm.js
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import './index.css';
 
 const AdmissionForm = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const {id} = useParams();
   const api = process.env.REACT_APP_API
+  const navigate = useNavigate();
   
   const onSubmit = async (data) => {
     const enrolledId = localStorage.getItem("enrolledId");
@@ -37,6 +38,7 @@ const AdmissionForm = () => {
         const result = await response.json();
         console.log(result);
         alert("Admitted Successful")
+        navigate("/admission-process/search-enroll")
       } else {
         console.error('Error submitting form');
         // Handle error case

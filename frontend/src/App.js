@@ -27,7 +27,7 @@ const App = () =>{
       <Route path = "/center/:id" element = {<EnquiryTable/>}/>
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
       <Route path = "/manager-login" element = {<Login/>}/>
-    
+      <Route path  = "//enquiry-admission/:id" element = {<AdmissionForm/>}/>
       <Route path = "/login/:id" element = {<EmployeeLoginForm/>}/>
       <Route path = "/cm-navbar/:id" element = {<CMSidebar/>}/>
       <Route path = "/admission-process/:id" element = {<AdmissionSidebar/>}/>

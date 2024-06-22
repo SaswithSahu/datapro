@@ -121,6 +121,7 @@ const ManagerRegistration = () => {
             <option value="">Select Center</option>
             <option value="DWK">DWK</option>
             <option value="MVP">MVP</option>
+            <option value="MVP">GWK</option>
           </select>
         </div>
 

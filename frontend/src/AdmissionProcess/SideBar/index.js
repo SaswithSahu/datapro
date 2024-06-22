@@ -8,7 +8,7 @@ import SearchEnroll from '../SearchEnroll';
 const AdmissionSidebar = () => {
     const {id} = useParams()
     const navigate = useNavigate();
-
+   
     useEffect(() => {
         const jwtToken = localStorage.getItem("jwt_token");
         if (!jwtToken) {

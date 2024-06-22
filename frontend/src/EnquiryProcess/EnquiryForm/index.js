@@ -82,7 +82,6 @@ const EnquiryForm = () => {
   
         console.log('Form data submitted:', filteredFormData);
         alert('Registered Successfully');
-        // Clear form data after successful submission
         setFormData({
           place: '',
           name: '',
