@@ -3,6 +3,7 @@ import { useParams,useNavigate } from 'react-router-dom';
 import RegisterEmployees from '../RegisterEmployes';
 import EmployeeList from '../EmployeeList';
 import CenterEnquiry from '../CenterEnquiry';
+import StudentJoiningStatus from '../../StudentJoiningStatus';
 
 //import StudentDetailsView from '../StudentDetailsView';
 // import Centers from '../Centers';
@@ -43,10 +44,13 @@ const CMSidebar = () => {
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Employee List</span> </a>
                             </li>
                             <li>
+                                <a href="/cm-navbar/enquiry-status" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Enquiry Status</span> </a>
+                            </li>
+                            <li>
                                 <a href="/cm-navbar/register-employee" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Register Employee</span> </a>
                             </li>
-                            
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
@@ -58,6 +62,7 @@ const CMSidebar = () => {
                 {id === center && <CenterEnquiry/>}
                  {id === 'register-employee' && <RegisterEmployees/>}
                  {id === "employee-list" && <EmployeeList/>}
+                 {id === "enquiry-status" && <StudentJoiningStatus/>}
                 </div>
             </div>
         </div>

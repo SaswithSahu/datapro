@@ -140,7 +140,6 @@ app.get('/enquiries', async (req, res) => {
 app.post('/register-manager', async (req, res) => {
   const { name, password, center } = req.body;
  
-  
   if (!name || !password || !center) {
     return res.status(400).json({ error: 'Name, password, and center are required.' });
   }
@@ -167,12 +166,8 @@ app.post('/register-manager', async (req, res) => {
 
 app.post('/manager-login', async (req, res) => {
   const { username, password,center } = req.body;
-  console.log(req.body);
-
   try {
     const manager = await Manager.findOne({ name:username});
-    console.log(manager);
-
     if (!manager) {
       return res.status(401).json({ error: 'Invalid name or password' });
     }
@@ -251,7 +246,7 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
     const savedAdmission = await newAdmission.save();
 
     if (enrolledId !== null) {
-      console.log("Enter");
+  
       await Enquiry.findByIdAndUpdate(enrolledId, { status: 'joined' });
     }
 
@@ -329,7 +324,6 @@ app.post('/login-employee', async (req, res) => {
 app.get("/employees",async(req, res) => {
   try{
     const employees = await Employee.find({})
-    console.log(employees);
     res.status(200).json({ employees });
   }catch(e){
     res.status(501).json({ "message": e });

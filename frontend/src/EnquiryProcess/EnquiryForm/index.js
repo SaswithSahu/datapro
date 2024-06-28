@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './index.css';
 
 const EnquiryForm = () => {
@@ -24,12 +24,30 @@ const EnquiryForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [employee,setEmployee] = useState([]);
+  const center = localStorage.getItem("center");
+  const fetchEmployees = async () => {
+
+      const response = await fetch(`${api}/employees`)
+      const data = await response.json()
+      //console.log(data.employees)
+      const filteredData = data.employees.filter(employee =>employee.center === center && employee.role === 'Councillor')
+      //console.log(filteredData)
+      setEmployee(filteredData)
+      
+  }
+
+
+  useEffect(() => {
+    fetchEmployees()
+  },[])
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  //console.log(employ)
   const validate = () => {
     let tempErrors = {};
     if (!formData.place) tempErrors.place = 'Place is required';
@@ -62,11 +80,11 @@ const EnquiryForm = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        // Filter out empty fields from the form data
+      
         const filteredFormData = Object.fromEntries(
           Object.entries(formData).filter(([key, value]) => value.trim() !== '')
         );
-  
+        console.log(filteredFormData)
         const response = await fetch(`${api}/enquiries`, {
           method: 'POST',
           headers: {
@@ -266,7 +284,22 @@ const EnquiryForm = () => {
         />
         {errors.courseFee && <span className="error">{errors.courseFee}</span>}
       </div>
-      <div className="form-group">
+      <div className='form-group'>
+      <label>Counselor Name:</label>
+      <select
+          name="counselorName"
+          value={formData.counselorName}
+          onChange={handleChange}
+        >
+         {employee.map(each =>(
+          <option key = {each.username} value = {each.username}>{each.username}</option>
+         ))}
+        </select>
+        {errors.counselorName && (
+          <span className="error">{errors.counselorName}</span>
+        )}
+      </div>
+      {/* <div className="form-group">
         <label>Counselor Name:</label>
         <input
           type="text"
@@ -277,7 +310,7 @@ const EnquiryForm = () => {
         {errors.counselorName && (
           <span className="error">{errors.counselorName}</span>
         )}
-      </div>
+      </div> */}
       <div className="form-group">
         <label>Center Name:</label>
         <select
