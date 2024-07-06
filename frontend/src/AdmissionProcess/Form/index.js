@@ -1,18 +1,15 @@
-// AdmissionForm.js
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './index.css';
 
 const AdmissionForm = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const {id} = useParams();
-  const api = process.env.REACT_APP_API
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { id } = useParams();
+  const api = process.env.REACT_APP_API;
   const navigate = useNavigate();
-  
+
   const onSubmit = async (data) => {
-    const enrolledId = localStorage.getItem("enrolledId");
-    console.log(enrolledId)
     const formData = new FormData();
     for (const key in data) {
       if (key === 'image') {
@@ -22,13 +19,17 @@ const AdmissionForm = () => {
       }
     }
 
-    if(id !== "form"){
+    if (id !== "form") {
       formData.append("enrolledId", id);
     }
-   
+
+    // Log formData values
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+    console.log(formData)
 
     try {
-      
       const response = await fetch(`${api}/admissions`, {
         method: 'POST',
         body: formData
@@ -37,8 +38,8 @@ const AdmissionForm = () => {
       if (response.ok) {
         const result = await response.json();
         console.log(result);
-        alert("Admitted Successful")
-        navigate("/admission-process/search-enroll")
+        alert("Admitted Successfully");
+        navigate("/admission-process/search-enroll");
       } else {
         console.error('Error submitting form');
         // Handle error case
@@ -55,9 +56,9 @@ const AdmissionForm = () => {
       <form className="admission-form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
-          <label htmlFor="idNo">ID No*</label>
-          <input type="text" id="idNo" className="input-field" {...register('IDNO', { required: true })} />
-          {errors.idNo && <span className="error">ID No is required</span>}
+          <label htmlFor="IdNo">ID No*</label>
+          <input type="text" id="IdNo" className="input-field" {...register('IdNo', { required: true })} />
+          {errors.IdNo && <span className="error">ID No is required</span>}
         </div>
 
         <div className="form-group">
@@ -67,7 +68,7 @@ const AdmissionForm = () => {
             <option value="MVP">MVP</option>
             <option value="GWK">GWK</option>
           </select>
-          {errors.center && <span className="error">Center is required</span>}
+          {errors.centerName && <span className="error">Center is required</span>}
         </div>
 
         <div className="form-group">
@@ -113,13 +114,11 @@ const AdmissionForm = () => {
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input type="email" id="email" className="input-field" {...register('email')} />
-          {errors.email && <span className="error">Email is required</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="group">Group/College/Occupation/Others</label>
           <input type="text" id="group" className="input-field" {...register('group')} />
-          {errors.group && <span className="error">This field is required</span>}
         </div>
 
         <h2 className="form-heading">Fees and Course Details</h2>
@@ -127,7 +126,7 @@ const AdmissionForm = () => {
         <div className="form-group">
           <label htmlFor="course">Course Enrolled*</label>
           <input type="text" id="course" className="input-field" {...register('courseEnrolled', { required: true })} />
-          {errors.course && <span className="error">Course is required</span>}
+          {errors.courseEnrolled && <span className="error">Course is required</span>}
         </div>
 
         <div className="form-group">
@@ -145,7 +144,7 @@ const AdmissionForm = () => {
         <div className="form-group">
           <label htmlFor="duration">Duration of Course*<br/>(in days)</label>
           <input type="text" id="duration" className="input-field" {...register('durationOfCourse', { required: true })} />
-          {errors.duration && <span className="error">Duration is required</span>}
+          {errors.durationOfCourse && <span className="error">Duration is required</span>}
         </div>
 
         <div className="form-group">

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-
-import './index.css';
+import { useNavigate } from 'react-router-dom';
+import "./index.css"
 
 const StudentDetailsView = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [enteredValue, setEnteredValue] = useState('');
   const [userDetails, setUserDetails] = useState(null);
+  const navigate = useNavigate("");
   const api = process.env.REACT_APP_API
 
   const handleOptionChange = (event) => {
@@ -63,17 +64,18 @@ const StudentDetailsView = () => {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Email</th>
+                <th>Course</th>
                 <th>Mobile</th>
-                <th>Aadhar</th>
+                <th>Actions</th>
+              
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{userDetails.name}</td>
-                <td>{userDetails.email}</td>
+                <td>{userDetails.coursePreferred}</td>
                 <td>{userDetails.mobile}</td>
-                <td>{userDetails.aadhar}</td>
+                <td><button onClick={() =>(navigate(`/enquiry-form/${userDetails._id}`))}>Edit</button><br/><button>Delete</button></td>
               </tr>
             </tbody>
           </table>

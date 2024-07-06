@@ -31,6 +31,12 @@ const CenterHomePage = () =>{
                         <h1>Center<br/>Manager</h1>
                     </div>
                 </a>
+                <a href = "/login/Admin" style={{textDecoration:"none",color:"black"}}>
+                    <div className="center-home-page-card shadow">
+                        <IoPersonSharp className="center-home-page-card-logo"/>
+                        <h1>Admin</h1>
+                    </div>
+                </a>
             </div>
         </div>
     )

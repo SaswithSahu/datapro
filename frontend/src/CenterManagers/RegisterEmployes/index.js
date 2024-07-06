@@ -101,6 +101,7 @@ const RegisterEmployees = () => {
                         >
                             <option value="FrontOffice">Front Office</option>
                             <option value="Councillor">Councillor</option>
+                            <option value="Admin">Admin</option>
                         </select>
                     </div>
                     <button type="submit" className="submit-button">Submit</button>

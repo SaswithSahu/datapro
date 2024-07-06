@@ -4,20 +4,18 @@ import CenterHomePage from "./CenterHomePage"
 import {BrowserRouter,Route,Routes} from "react-router-dom"
 import Sidebar from "./EnquiryProcess/Navbar"
 import EnquiryTable from "./EnquiryTable"
-//import Centers from "./MDModule/Centers"
 import MDSidebar from "./MDModule/MDNavbar"
 import HoHomePage from "./HOHomePage"
 import Login from "./CenterManagers/Login"
 import AdmissionSidebar from "./AdmissionProcess/SideBar"
 import AdmissionForm from "./AdmissionProcess/Form"
-// import RegisterEmployees from "./CenterManagers/RegisterEmployes"
 import CMSidebar from "./CenterManagers/CMNavBar"
 import EmployeeLoginForm from "./EmployeeLoginForm"
-//import EmployeeList from "./CenterManagers/EmployeeList"
-//import StudentJoiningStatus from "./StudentJoiningStatus"
 import MdLogin from "./MDModule/MdLogin"
-//import CenterAdmissions from "./MDModule/CenterAdmissions"
 import AdmissionTable from "./AdmissionTable"
+import PayFees from "./AdminModule/PayFees"
+import AdminNavbar from "./AdminModule/AdminNavbar"
+import RevenueChart from "./MDModule/Revenue"
 
 
 
@@ -28,6 +26,8 @@ const App = () =>{
       <Route path = "/" element = {<Home/>}/>
       <Route path = "/center-home/:id" element = {<CenterHomePage/>}/>
       <Route path = "/ho-home" element = {<HoHomePage/>}/>
+      <Route path = "/admin/:id" element = {<AdminNavbar/>}/>
+      <Route path = "/demo" element = {<RevenueChart/>}/>
       <Route path = "/center/:id" element = {<EnquiryTable/>}/>
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
       <Route path = "/manager-login" element = {<Login/>}/>

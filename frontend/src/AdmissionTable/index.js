@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
 import { useParams } from 'react-router-dom';
-// import EnquirySlider from '../EnquirySlider';
 
 const AdmissionTable = () => {
     const { id } = useParams();
@@ -21,7 +20,7 @@ const AdmissionTable = () => {
                 }
                 const data = await response.json();
                 const filteredData = data.filter(item => item.centerName === id);
-                
+
                 setEnquiries(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -44,12 +43,11 @@ const AdmissionTable = () => {
                         enquiryDate.getFullYear() === now.getFullYear()
                     );
                 });
-                console.log(filteredData)
             } else if (filter === 'yesterday') {
                 const yesterday = new Date(now);
                 yesterday.setDate(now.getDate() - 1);
                 filteredData = enquiries.filter(enquiry => {
-                    const enquiryDate = new Date(enquiry.date);
+                    const enquiryDate = new Date(enquiry.dateOfJoining);
                     return (
                         enquiryDate.getDate() === yesterday.getDate() &&
                         enquiryDate.getMonth() === yesterday.getMonth() &&
@@ -58,11 +56,11 @@ const AdmissionTable = () => {
                 });
             } else if (filter === 'lastMonth') {
                 const lastMonth = new Date(now);
-                lastMonth.setMonth(now.getMonth() - 1);
+                lastMonth.setMonth(now.getMonth());
                 filteredData = enquiries.filter(enquiry => {
-                    const enquiryDate = new Date(enquiry.date);
+                    const enquiryDate = new Date(enquiry.dateOfJoining);
                     return (
-                        enquiryDate.getMonth() >= lastMonth.getMonth() &&
+                        enquiryDate.getMonth() === lastMonth.getMonth() &&
                         enquiryDate.getFullYear() === lastMonth.getFullYear()
                     );
                 });
@@ -74,15 +72,13 @@ const AdmissionTable = () => {
     }, [filter, enquiries]);
 
     const handleDateRangeFilter = () => {
-        console.log(enquiries)
         const from = new Date(fromDate);
         const to = new Date(toDate);
         const filteredData = enquiries.filter(enquiry => {
-            const enquiryDate = new Date(enquiry.date);
+            const enquiryDate = new Date(enquiry.dateOfJoining);
             return enquiryDate >= from && enquiryDate <= to;
         });
         setFilteredEnquiries(filteredData);
-      
     };
 
     return (

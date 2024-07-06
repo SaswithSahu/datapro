@@ -1,13 +1,18 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 //import StudentDetailsView from '../StudentDetailsView';
 import Centers from '../Centers';
 import ManagerRegistration from '../ManagerRegistration';
 import EnquiresAndAdmissions from '../EnquiresAndAdmissions';
 import CenterAdmissions from '../CenterAdmissions';
+import RevenueChart from '../Revenue';
 
 const MDSidebar = () => {
     const {id} = useParams()
+    const navigate = useNavigate();
+    const logout = () =>{
+        navigate("/");
+    }
     return (
         <div className="container-fluid" style={{height:"100vh"}}>
             <div className="row flex-nowrap">
@@ -32,13 +37,17 @@ const MDSidebar = () => {
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Admissions & Enquiries</span> </a>
                             </li>
                             <li>
+                                <a href="/md-navbar/revenue" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Revenue</span> </a>
+                            </li>
+                            <li>
                                 <a href="/md-navbar/register-managers" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Register Managers</span> </a>
                             </li>
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
-                          <button>Logout</button>
+                          <button onClick = {logout}>Logout</button>
                         </div>
                     </div>
                 </div>
@@ -47,6 +56,7 @@ const MDSidebar = () => {
                  {id === 'register-managers' && <ManagerRegistration/>}
                  {id === 'admissions' && <EnquiresAndAdmissions/>}
                  {id === "center-admissions" && <CenterAdmissions/>}
+                 {id === "revenue" && <RevenueChart/>}
                 </div>
             </div>
         </div>

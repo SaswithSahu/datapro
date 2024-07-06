@@ -10,6 +10,7 @@ const EmployeeLoginForm = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const { id } = useParams();
+    console.log(id)
     const navigate = useNavigate();
     const api = process.env.REACT_APP_API;
 
@@ -20,6 +21,9 @@ const EmployeeLoginForm = () => {
                 navigate('/navbar/enquiry-form', { replace: true });
             } else if (id === 'Councillor') {
                 navigate('/admission-process/form', { replace: true });
+            }else if(id === 'Admin'){
+                console.log("hello")
+                navigate('/admin/pay-fees',{replace:true})
             }
         }
     }, [navigate]);
@@ -56,6 +60,8 @@ const EmployeeLoginForm = () => {
                     navigate('/navbar/enquiry-form', { replace: true });
                 } else if (id === 'Councillor') {
                     navigate('/admission-process/form', { replace: true });
+                }else if (id === 'Admin') {
+                    navigate('/admin/pay-fees', { replace: true });
                 }
             } else {
                 alert("Login Failed")

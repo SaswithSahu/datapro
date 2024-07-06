@@ -9,6 +9,7 @@ const Admission = require("./model/Admission");
 const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 const Employee = require('./model/Employee');
+const Fees = require("./model/Fees")
 
 const app = express();
 
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 const upload = multer({ storage: storage });
@@ -212,14 +213,15 @@ app.get('/getDetails', async (req, res) => {
 app.post('/admissions', upload.single('image'), async (req, res) => {
   try {
     const {
-      IDNO, centerName, name, gender, address, aadharNo,
+      IdNo, centerName, name, gender, address, aadharNo,
       mobileNo, email, others, courseEnrolled, dateOfJoining,
       totalFees, durationOfCourse, feeDueDate, trainer, timings, enrolledId
     } = req.body;
 
-    // Prepare the new admission object
+    console.log(req.body)
+
     const newAdmissionData = {
-      IDNO,
+      IdNo,
       centerName,
       name,
       gender,
@@ -329,5 +331,124 @@ app.get("/employees",async(req, res) => {
     res.status(501).json({ "message": e });
   }
 })
+
+app.get("/student/:id",async(req,res) => {
+  const {id} = req.params
+  try{
+    const student = await Admission.findOne({ IdNo:id })
+    if(!student){
+      return res.status(501).json("student not found")
+    }
+    res.status(200).json({ student });
+  }catch(e){
+    res.status(500).send(e)
+  }
+})
+
+app.post('/pay-fees', async (req, res) => {
+  const { IdNo, amountPaid, modeOfPayment, nextTermDate, center } = req.body;
+  if (!IdNo || !amountPaid || !modeOfPayment || !nextTermDate || !center) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    const admission = await Admission.findOne({ IdNo });
+
+    if (!admission) {
+      return res.status(400).json({ error: 'Student admission record not found' });
+    }
+
+    let fees = await Fees.findOne({ IdNo });
+
+    if (fees) {
+      const lastTermNumber = fees.terms.length > 0 
+        ? Math.max(...fees.terms.map(term => term.termNumber)) 
+        : 0;
+      const newTermNumber = lastTermNumber + 1;
+
+      fees.terms.push({ termNumber: newTermNumber, amountPaid, modeOfPayment });
+      fees.nextTermDate = nextTermDate;
+      const totalPaid = fees.terms.reduce((total, term) => total + term.amountPaid, 0);
+
+      fees.totalStatus = totalPaid >= admission.totalFees ? 'completed' : 'pending';
+      await fees.save();
+    } else {
+      const totalPaid = amountPaid;
+      const totalStatus = totalPaid >= admission.totalFees ? 'completed' : 'pending';
+
+      fees = new Fees({
+        IdNo,
+        terms: [{ termNumber: 1, amountPaid, modeOfPayment }],
+        nextTermDate,
+        totalStatus,
+        center
+      });
+      await fees.save();
+    }
+
+    res.status(200).json({ message: 'Term added successfully', fees });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/get-fees-details/:id",async(req, res) => {
+    const {id} = req.params;
+    try{
+      const feesDetails = await Fees.findOne({IdNo:id});
+      if(!feesDetails){
+        res.status(200).json("No Payment Details Found")
+      }
+      res.status(200).json(feesDetails)
+    }catch(e){
+      res.status(500).json(e.message)
+    }
+})
+
+app.get('/fees-due-today', async (req, res) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to midnight to compare only the date part
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1); // Increment the date by one day
+
+  try {
+    const feesDueToday = await Fees.find({
+      nextTermDate: {
+        $gte: today,
+        $lt: tomorrow
+      },
+      totalStatus: 'pending'
+    });
+
+    console.log(feesDueToday);
+    const feesWithAdmissions = await Promise.all(feesDueToday.map(async (fee) => {
+      const admission = await Admission.findOne({ IdNo: fee.IdNo });
+      return {
+        fee,
+        admission
+      };
+    }));
+
+    res.status(200).json(feesWithAdmissions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/fees",async(req, res) => {
+  try{
+    const feesDetails = await Fees.find();
+    if(!feesDetails){
+      res.status(200).json("No Payment Details Found")
+    }
+    res.status(200).json(feesDetails)
+  }catch(e){
+    res.status(500).json(e.message)
+  }
+})
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

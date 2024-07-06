@@ -34,9 +34,10 @@ const Home = () =>{
                     <h1>GWK</h1>
                 </div>
             </a>
+           
             </div>
         </div>
     )
 }
 
-export default Home 
+export default Home

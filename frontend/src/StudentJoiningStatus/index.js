@@ -3,11 +3,16 @@ import './index.css';
 
 const StudentJoiningStatus = () => {
   const [enquiries, setEnquiries] = useState([]);
+  const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [joinedCount, setJoinedCount] = useState(0);
   const [notJoinedCount, setNotJoinedCount] = useState(0);
-  const center = localStorage.getItem("center");
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('today');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const center = localStorage.getItem('center');
 
   useEffect(() => {
     fetch('http://localhost:5000/enquiries')
@@ -20,18 +25,54 @@ const StudentJoiningStatus = () => {
       .then(data => {
         const filteredData = data.filter(data => data.centerName === center);
         setEnquiries(filteredData);
+        setFilteredEnquiries(filteredData);
         setLoading(false);
 
-        const joined = filteredData.filter(enquiry => enquiry.status === 'joined').length;
-        const notJoined = filteredData.length - joined;
-        setJoinedCount(joined);
-        setNotJoinedCount(notJoined);
       })
       .catch(error => {
         setError(error);
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    filterEnquiries();
+  }, [statusFilter, dateFilter, startDate, endDate]);
+
+  const filterEnquiries = () => {
+    let filtered = enquiries;
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(enquiry => enquiry.status === statusFilter);
+    }
+
+    if (dateFilter !== 'all') {
+      const today = new Date();
+      if (dateFilter === 'today') {
+        filtered = filtered.filter(enquiry => new Date(enquiry.date).toDateString() === today.toDateString());
+      } else if (dateFilter === 'yesterday') {
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        filtered = filtered.filter(enquiry => new Date(enquiry.date).toDateString() === yesterday.toDateString());
+      } else if (dateFilter === 'lastMonth') {
+        const lastMonth = new Date(today);
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        filtered = filtered.filter(enquiry => new Date(enquiry.date) >= lastMonth && new Date(enquiry.date) <= today);
+      }
+    }
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      filtered = filtered.filter(enquiry => new Date(enquiry.date) >= start && new Date(enquiry.date) <= end);
+    }
+
+    setFilteredEnquiries(filtered);
+    const joined = filtered.filter(enquiry => enquiry.status === 'joined').length;
+    const notJoined = filtered.length - joined;
+    setJoinedCount(joined);
+    setNotJoinedCount(notJoined);
+  };
 
   if (loading) {
     return <p className="studentJoinStatus-loading">Loading...</p>;
@@ -43,20 +84,36 @@ const StudentJoiningStatus = () => {
 
   return (
     <div className="studentJoinStatus-container">
+      <div className="studentJoinStatus-filters">
+        <select className="studentJoinStatus-filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="joined">Joined</option>
+          <option value="notJoined">Not Joined</option>
+        </select>
+        <select className="studentJoinStatus-filter" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="lastMonth">Last Month</option>
+        </select>
+        <input className="studentJoinStatus-filter" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <input className="studentJoinStatus-filter" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+      </div>
       <div className="studentJoinStatus-counts">
-        <p style={{color:"green"}}>Joined: {joinedCount}</p>
-        <p style={{color:"red"}}>Not Joined: {notJoinedCount}</p>
+        <p style={{ color: 'green' }}>Joined: {joinedCount}</p>
+        <p style={{ color: 'red' }}>Not Joined: {notJoinedCount}</p>
       </div>
       <table className="studentJoinStatus-table">
         <thead>
           <tr>
             <th className="studentJoinStatus-th">Student Name</th>
             <th className="studentJoinStatus-th">Course Name</th>
+            <th className='studentJoinStatus-th'>Counselor Name</th>
             <th className="studentJoinStatus-th">Phone Number</th>
           </tr>
         </thead>
         <tbody>
-          {enquiries.map((enquiry, index) => (
+          {filteredEnquiries.map((enquiry, index) => (
             <tr
               key={index}
               className={`studentJoinStatus-tr ${
@@ -65,6 +122,7 @@ const StudentJoiningStatus = () => {
             >
               <td className="studentJoinStatus-td">{enquiry.name}</td>
               <td className="studentJoinStatus-td">{enquiry.coursePreferred}</td>
+              <td className = "studentJoinStatus-td">{enquiry.counselorName}</td>
               <td className="studentJoinStatus-td">{enquiry.mobile}</td>
             </tr>
           ))}

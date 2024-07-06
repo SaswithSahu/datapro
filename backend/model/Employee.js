@@ -14,7 +14,7 @@ const EmployeeSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ['FrontOffice', 'Councillor'],
+        enum: ['FrontOffice', 'Councillor','Admin'],
     },
     center: {
         type: String,
