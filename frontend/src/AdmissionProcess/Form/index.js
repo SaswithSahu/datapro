@@ -13,25 +13,24 @@ const AdmissionForm = () => {
     const formData = new FormData();
     for (const key in data) {
       if (key === 'image') {
-        formData.append(key, data[key][0]); // appending file
+        formData.append(key, data[key][0]);
       } else {
         formData.append(key, data[key]);
       }
     }
-
+    formData.append("centerName",localStorage.getItem("center"));
     if (id !== "form") {
       formData.append("enrolledId", id);
     }
-
-    // Log formData values
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
-    console.log(formData)
-
     try {
+      const token = localStorage.getItem("jwt_token");
       const response = await fetch(`${api}/admissions`, {
         method: 'POST',
+
+        headers: {
+          'Authorization': token,
+        },
+        mode: 'cors',
         body: formData
       });
 
@@ -42,11 +41,10 @@ const AdmissionForm = () => {
         navigate("/admission-process/search-enroll");
       } else {
         console.error('Error submitting form');
-        // Handle error case
+        alert("Failed To Admit")
       }
     } catch (error) {
       console.error('Error submitting form', error);
-      // Handle error case
     }
   };
 
@@ -61,7 +59,7 @@ const AdmissionForm = () => {
           {errors.IdNo && <span className="error">ID No is required</span>}
         </div>
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="center">Center*</label>
           <select id="center" className="input-field" {...register('centerName', { required: true })}>
             <option value="DWK">DWK</option>
@@ -69,7 +67,7 @@ const AdmissionForm = () => {
             <option value="GWK">GWK</option>
           </select>
           {errors.centerName && <span className="error">Center is required</span>}
-        </div>
+        </div> */}
 
         <div className="form-group">
           <label htmlFor="name">Name*</label>
@@ -169,7 +167,7 @@ const AdmissionForm = () => {
           {errors.timings && <span className="error">Timings are required</span>}
         </div>
 
-        <button type="submit" className="submit-button">Submit</button>
+        <button type="submit" className="admission-submit-button">Submit</button>
       </form>
     </div>
   );

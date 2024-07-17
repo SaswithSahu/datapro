@@ -10,11 +10,14 @@ const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 const Employee = require('./model/Employee');
 const Fees = require("./model/Fees")
+const path = require('path');
 
 const app = express();
 
-app.use(bodyParser.json());
 app.use(cors("*"));
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -24,7 +27,7 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage:storage });
 
 mongoose.connect('mongodb+srv://saswith:saswith@cluster0.rtqlfvi.mongodb.net/datapro')
 .then(() => console.log('MongoDB connected'))
@@ -38,11 +41,12 @@ const authenticateToken = (req, res, next) => {
   jwt.verify(token, "jwt-secret", (err, user) => {
       if (err) return res.status(403).send('Invalid Token');
       req.user = user;
+      console.log(user)
       next();
   });
 };
 
-app.post('/enquiries', async (req, res) => {
+app.post('/enquiries',authenticateToken, async (req, res) => {
   try {
     const {
       place,
@@ -63,6 +67,11 @@ app.post('/enquiries', async (req, res) => {
       status,
       remarks
     } = req.body;
+    
+    console.log(req.user.center === centerName)
+    if(req.user.center !== centerName){
+       return res.status(500).json("Invalid Access");
+    }
 
     const enquiryData = {
       place,
@@ -84,7 +93,7 @@ app.post('/enquiries', async (req, res) => {
       remarks
     };
 
-    // Remove undefined fields
+
     Object.keys(enquiryData).forEach((key) => {
       if (enquiryData[key] === undefined) {
         delete enquiryData[key];
@@ -95,41 +104,39 @@ app.post('/enquiries', async (req, res) => {
 
     const savedEnquiry = await newEnquiry.save();
 
-    res.status(201).json(savedEnquiry);
+    res.status(201).json("Registered Successfully");
   } catch (err) {
     if (err.name === 'ValidationError' || err.code === 11000) {
       console.log(err);
       res.status(400).json({ error: err.message });
     } else {
       console.log(err);
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json("Server Error");
     }
   }
 });
 
-app.get('/student-details', async (req, res) => {
+app.get('/student-details',authenticateToken,async (req, res) => {
   try {
     const { mobile, aadhar } = req.query;
 
     if (!mobile && !aadhar) {
       return res.status(400).json({ error: 'Please provide either mobile or aadhar number' });
     }
-
     const query = mobile ? { mobile } : { aadhar };
-    const user = await Enquiry.findOne(query);
-
+    const user = await Enquiry.find(query);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    res.json(user);
+    const users = user.filter(u => u.centerName === req.user.center)
+    res.json(users);
   } catch (error) {
     console.error('Error fetching user details:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.get('/enquiries', async (req, res) => {
+app.get('/enquiries',async (req, res) => {
   try {
       const enquiries = await Enquiry.find({});
       res.status(200).json(enquiries);
@@ -137,6 +144,28 @@ app.get('/enquiries', async (req, res) => {
       res.status(500).json({ message: 'Error fetching enquiries', error: err });
   }
 });
+
+app.get('/enquiries-status',authenticateToken,async (req, res) => {
+  try {
+      const Councillor = req.user.name
+      const enquiries = await Enquiry.find({});
+      const en = enquiries.filter(u => u.counselorName === "p.mounika")
+      console.log(en)
+      res.status(200).json(enquiries);
+  } catch (err) {
+      res.status(500).json({ message: 'Error fetching enquiries', error: err });
+  }
+});
+
+app.delete("/delete-enquiry/:id",authenticateToken,async(req,res) =>{
+  const {id} = req.params;
+  try{
+    const deleteEnquiry = await Enquiry.findByIdAndDelete(id);
+    res.status(201).json("Enquiry Deleted")
+  }catch(e){
+    res.status(500).json("Server Error")
+  }
+})
 
 app.post('/register-manager', async (req, res) => {
   const { name, password, center } = req.body;
@@ -189,28 +218,28 @@ app.post('/manager-login', async (req, res) => {
   }
 });
 
-app.get('/getDetails', async (req, res) => {
+app.get('/getDetails',authenticateToken,async (req, res) => {
   const { mobile } = req.query;
 
   if (!mobile) {
-    return res.status(400).json({ error: 'Mobile number is required' });
+    return res.status(400).json('Mobile number is required');
   }
 
   try {
     const enquiries = await Enquiry.find({ mobile });
-
-    if (enquiries.length === 0) {
-      return res.status(404).json({ error: 'No data found for the provided mobile number' });
+    const filteredEnquiries = enquiries.filter(e => e.centerName === req.user.center)
+    if (filteredEnquiries.length === 0) {
+      return res.status(400).json('No data found for the provided mobile number');
     }
 
-    res.json(enquiries);
+    res.json(filteredEnquiries);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.post('/admissions', upload.single('image'), async (req, res) => {
+app.post('/admissions',authenticateToken,upload.single('image'), async (req, res) => {
   try {
     const {
       IdNo, centerName, name, gender, address, aadharNo,
@@ -218,7 +247,8 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
       totalFees, durationOfCourse, feeDueDate, trainer, timings, enrolledId
     } = req.body;
 
-    console.log(req.body)
+    // console.log('Request body:', req.body);
+    // console.log('File info:', req.file);
 
     const newAdmissionData = {
       IdNo,
@@ -236,24 +266,23 @@ app.post('/admissions', upload.single('image'), async (req, res) => {
       durationOfCourse,
       feeDueDate,
       trainer,
+      counselorName :req.user.name,
       timings
     };
 
     if (req.file) {
-      newAdmissionData.image = req.file.path;
+      const imagePath = req.file.path.replace(/\\/g, '/');
+      newAdmissionData.image = imagePath;
     }
 
     const newAdmission = new Admission(newAdmissionData);
-
     const savedAdmission = await newAdmission.save();
 
     if (enrolledId !== null) {
-  
       await Enquiry.findByIdAndUpdate(enrolledId, { status: 'joined' });
     }
 
     res.status(201).json(savedAdmission);
-
   } catch (error) {
     console.error('Error creating admission entry:', error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -314,7 +343,7 @@ app.post('/login-employee', async (req, res) => {
           return res.status(401).json({ message: 'Invalid center or role' });
       }
 
-      const token = jwt.sign({ id: user._id, center: user.center, role: user.role }, "jwt-secret", { expiresIn: '1h' });
+      const token = jwt.sign({ id: user._id, center: user.center, name:user.username, role: user.role }, "jwt-secret", { expiresIn: '1h' });
 
       res.status(200).json({ token });
   } catch (error) {
@@ -335,11 +364,12 @@ app.get("/employees",async(req, res) => {
 app.get("/student/:id",async(req,res) => {
   const {id} = req.params
   try{
-    const student = await Admission.findOne({ IdNo:id })
-    if(!student){
+    const admission = await Admission.findOne({ IdNo:id })
+    const feesDetails = await Fees.findOne({ IdNo:id })
+    if(!admission){
       return res.status(501).json("student not found")
     }
-    res.status(200).json({ student });
+    res.status(200).json({ admission,feesDetails });
   }catch(e){
     res.status(500).send(e)
   }
@@ -407,7 +437,7 @@ app.get("/get-fees-details/:id",async(req, res) => {
 
 app.get('/fees-due-today', async (req, res) => {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set time to midnight to compare only the date part
+  today.setHours(0, 0, 0, 0); 
 
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1); // Increment the date by one day
@@ -421,7 +451,6 @@ app.get('/fees-due-today', async (req, res) => {
       totalStatus: 'pending'
     });
 
-    console.log(feesDueToday);
     const feesWithAdmissions = await Promise.all(feesDueToday.map(async (fee) => {
       const admission = await Admission.findOne({ IdNo: fee.IdNo });
       return {

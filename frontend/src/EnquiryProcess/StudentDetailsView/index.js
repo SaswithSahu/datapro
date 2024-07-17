@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import "./index.css"
 
 const StudentDetailsView = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [enteredValue, setEnteredValue] = useState('');
-  const [userDetails, setUserDetails] = useState(null);
-  const navigate = useNavigate("");
+  const [userDetails, setUserDetails] = useState([]);
+  const [view,setViewDetails] = useState("INITIAL");
   const api = process.env.REACT_APP_API
+
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
     setEnteredValue('');
-    setUserDetails(null);
+    setUserDetails([]);
   };
 
   const handleValueChange = (event) => {
@@ -20,16 +21,55 @@ const StudentDetailsView = () => {
   };
 
   const fetchUserDetails = async () => {
+    const token = localStorage.getItem("jwt_token");
     try {
-      const response = await fetch(`${api}/student-details?${selectedOption}=${enteredValue}`);
+      const response = await fetch(`${api}/student-details?${selectedOption}=${enteredValue}`,{
+        method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          mode: 'cors',
+      });
       const data = await response.json();
       console.log(data)
-      setUserDetails(data);
+      if(data.length > 0) {
+        setUserDetails(data);
+        setViewDetails("SUCCESS")
+      }
+      else{
+        setViewDetails("FAILED");
+      }
+     
     } catch (error) {    
       console.error('Error fetching user details:', error);
     }
   };
+  const deleteEnquiry = async (id) =>{
+    const token = localStorage.getItem("jwt_token");
+    try{
+      const response = await fetch(`${api}/delete-enquiry/${id}`,{
+        method:"DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        mode: 'cors',
+      })
+      const data = await response.json();
+      console.log(data)
+      if(response.ok){
+        alert("Deleted Successfully");
+        fetchUserDetails()
+      }
+      else{
+        alert("Failed To Delete")
+      }
+    }catch(e){
+      console.log(e)
+    }
 
+  }
   return (
     <div className="user-details-container">
       <div className="select-container">
@@ -58,8 +98,8 @@ const StudentDetailsView = () => {
           Fetch User Details
         </button>
       </div>
-      {userDetails && (
-        <div className="table-container">
+      {view === "SUCCESS" && 
+          <div className="table-container">
           <table className="user-details-table">
             <thead>
               <tr>
@@ -67,20 +107,31 @@ const StudentDetailsView = () => {
                 <th>Course</th>
                 <th>Mobile</th>
                 <th>Actions</th>
-              
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>{userDetails.name}</td>
-                <td>{userDetails.coursePreferred}</td>
-                <td>{userDetails.mobile}</td>
-                <td><button onClick={() =>(navigate(`/enquiry-form/${userDetails._id}`))}>Edit</button><br/><button>Delete</button></td>
-              </tr>
-            </tbody>
+            {userDetails.map((item,index) => (
+                <tr key={index}>
+                  <td>{item.name}</td>
+                  <td>{item.coursePreferred}</td>
+                  <td>{item.mobile}</td>
+                  <td><button>Edit</button><br/><button onClick = {() => deleteEnquiry(item._id)}>Delete</button></td>
+                </tr>
+            ))}
+             </tbody>
           </table>
         </div>
-      )}
+        }
+        {view === "INITIAL" && 
+            <div className='student-details-initial-view'>
+              <h1>Get Student Details using Their Phone Number And Aadhar Details</h1>
+            </div>
+        }
+        {view === "FAILED" &&
+            <div className='student-details-failed-view'>
+              <h1>Data Not Found</h1>
+            </div>
+        }
     </div>
   );
 };

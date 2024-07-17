@@ -4,12 +4,12 @@ import './index.css';
 const PayFees = () => {
   const [studentID, setStudentID] = useState('');
   const [student, setStudent] = useState(null);
+  const [payment, setPayment] = useState(null)
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [amount, setAmount] = useState('');
   const [nextTermDate, setNextTermDate] = useState('');
   const [paymentMode, setPaymentMode] = useState('');
-  const [feesDetails,setFeesDetails] = useState(null);
   const api = process.env.REACT_APP_API;
 
   const handleInputChange = (e) => {
@@ -32,11 +32,13 @@ const PayFees = () => {
         throw new Error('Student not found');
       }
       const data = await response.json();
-      if(data.student.centerName !== center) {
+      console.log(data)
+      if(data.admission.centerName !== center) {
         alert("This Student Is Not From Your Center")
         throw new Error('Student not found');
       }
-      setStudent(data.student);
+      setStudent(data.admission);
+      setPayment(data.feesDetails)
 
       setError(null);
     } catch (error) {
@@ -117,8 +119,9 @@ const PayFees = () => {
             <p className="student-timings"><strong>Timings:</strong> {student.timings}</p>
             <p className="student-start-date"><strong>Start Date:</strong> {formatDate(student.dateOfJoining)}</p>
             <p className="student-total-fees"><strong>Total Fees:</strong> {student.totalFees}</p>
-            { <button onClick={handlePayFeesClick} className="pay-fees-button">Pay Fees</button>}
-            {/* {feesDetails.totalStatus === 'completed' && <h1 style={{color:"green",fontFamily:"roboto"}}>FEES PAID</h1>} */}
+            {
+              payment ? payment.totalStatus === "completed"?(<h1 style={{color:"green",fontFamily:"Roboto"}}>Fees Paid</h1>):(<button onClick={handlePayFeesClick} className="pay-fees-button">Pay</button>):(<button  onClick={handlePayFeesClick} className="pay-fees-button">Pay</button>)
+            }
           </div>
         </div>
       )}

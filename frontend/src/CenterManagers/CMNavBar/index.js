@@ -3,7 +3,8 @@ import { useParams,useNavigate } from 'react-router-dom';
 import RegisterEmployees from '../RegisterEmployes';
 import EmployeeList from '../EmployeeList';
 import CenterEnquiry from '../CenterEnquiry';
-import StudentJoiningStatus from '../../StudentJoiningStatus';
+
+import StudentJoiningStatus from '../StudentJoiningStatus';
 
 //import StudentDetailsView from '../StudentDetailsView';
 // import Centers from '../Centers';

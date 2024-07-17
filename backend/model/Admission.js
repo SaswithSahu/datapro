@@ -67,7 +67,11 @@ const admissionSchema = new mongoose.Schema({
   timings: {
     type: String,
     required: true
-  }
+  },
+  counselorName: {
+    type: String,
+    required: true
+  },
 }, {
   timestamps: true
 });

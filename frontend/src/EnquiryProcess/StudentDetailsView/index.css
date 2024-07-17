@@ -110,3 +110,13 @@
 .user-details-table button:last-child:hover {
   background-color: #c82333;
 }
+.student-details-initial-view{
+  color: darkslategray;
+  text-align: center;
+  margin-top: 80px;
+}
+.student-details-failed-view{
+  color:#dc3545;
+  text-align: center;
+  margin-top:80px;
+}

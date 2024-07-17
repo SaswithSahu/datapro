@@ -14,15 +14,22 @@ const SearchEnroll = () => {
   const handleSearch = async () => {
     setLoading(true);
     setError(null);
-
+    const token = localStorage.getItem("jwt_token");
     try {
-      const response = await fetch(`${api}/getDetails?mobile=${mobileNumber}`);
+      const response = await fetch(`${api}/getDetails?mobile=${mobileNumber}`,{
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        mode: 'cors',
+      });
+      const data = await response.json();
       if (!response.ok) {
+        alert(data)
         throw new Error('Network response was not ok');
       }
-      const result = await response.json();
-      console.log(result);
-      setData(result);
+      setData(data);
     } catch (err) {
       setError('Failed to retrieve data. Please try again.');
     } finally {

@@ -44,8 +44,9 @@
     font-size: 12px;
   }
   
-  .submit-button {
-    padding: 10px 15px;
+  .admission-submit-button {
+    width:70px;
+    padding: 10px 10px;
     background-color: #000;
     color: #fff;
     border: none;

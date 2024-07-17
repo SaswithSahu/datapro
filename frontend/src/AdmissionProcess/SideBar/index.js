@@ -4,6 +4,7 @@ import { useParams,useNavigate } from 'react-router-dom';
 
 import AdmissionForm from '../Form';
 import SearchEnroll from '../SearchEnroll';
+import EnquiryStatus from '../EnquiryStatus';
 
 const AdmissionSidebar = () => {
     const {id} = useParams()
@@ -39,6 +40,10 @@ const AdmissionSidebar = () => {
                                 <a href="/admission-process/search-enroll" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Search&Enroll</span> </a>
                             </li>
+                            <li>
+                                <a href="/admission-process/enquiry-status" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Enquiry Status</span> </a>
+                            </li>
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
@@ -49,6 +54,7 @@ const AdmissionSidebar = () => {
                 <div className="col py-3" style={{height:"100vh",overflow:"auto"}}>
                  {id === 'form' && <AdmissionForm/>}
                  {id === 'search-enroll' && <SearchEnroll/>}
+                 {id === "enquiry-status" && <EnquiryStatus/>}
                 </div>
             </div>
         </div>

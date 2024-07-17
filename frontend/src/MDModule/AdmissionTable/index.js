@@ -45,7 +45,7 @@ const AdmissionTable = () => {
                 });
             } else if (filter === 'yesterday') {
                 const yesterday = new Date(now);
-                yesterday.setDate(now.getDate() - 1);
+                yesterday.setDate(now.getDate()-1);
                 filteredData = enquiries.filter(enquiry => {
                     const enquiryDate = new Date(enquiry.dateOfJoining);
                     return (
@@ -56,7 +56,7 @@ const AdmissionTable = () => {
                 });
             } else if (filter === 'lastMonth') {
                 const lastMonth = new Date(now);
-                lastMonth.setMonth(now.getMonth());
+                lastMonth.setMonth(now.getMonth()-1);
                 filteredData = enquiries.filter(enquiry => {
                     const enquiryDate = new Date(enquiry.dateOfJoining);
                     return (
@@ -87,7 +87,6 @@ const AdmissionTable = () => {
                 <h1 className='center-name' style={{ fontSize: "46px" }}>{id}</h1>
                 <h1 className="total-count">Total: {filteredEnquiries.length}</h1>
             </div>
-            {/* <EnquirySlider enquiries={filteredEnquiries} /> */}
             <div className='table-filter-container'>
                 <table className="enquiry-table">
                     <thead>
