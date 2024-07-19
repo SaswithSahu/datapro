@@ -14,9 +14,10 @@ const EnquiryStatus = () => {
   const [endDate, setEndDate] = useState('');
   const center = localStorage.getItem('center');
   const token = localStorage.getItem("jwt_token");
+  const api = process.env.REACT_APP_API;
 
   useEffect(() => {
-    fetch('http://localhost:5000/enquiries-status',{
+    fetch(`${api}/enquiry-status`,{
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +117,6 @@ const EnquiryStatus = () => {
           <tr>
             <th className="studentJoinStatus-th">Student Name</th>
             <th className="studentJoinStatus-th">Course Name</th>
-            <th className='studentJoinStatus-th'>Counselor Name</th>
             <th className="studentJoinStatus-th">Phone Number</th>
           </tr>
         </thead>
@@ -130,7 +130,6 @@ const EnquiryStatus = () => {
             >
               <td className="studentJoinStatus-td">{enquiry.name}</td>
               <td className="studentJoinStatus-td">{enquiry.coursePreferred}</td>
-              <td className = "studentJoinStatus-td">{enquiry.counselorName}</td>
               <td className="studentJoinStatus-td">{enquiry.mobile}</td>
             </tr>
           ))}

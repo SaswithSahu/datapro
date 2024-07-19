@@ -15,6 +15,8 @@ import MdLogin from "./MDModule/MdLogin"
 import AdmissionTable from "./MDModule/AdmissionTable"
 import AdminNavbar from "./AdminModule/AdminNavbar"
 import RevenueChart from "./MDModule/Revenue"
+import AllCourses from "./CenterManagers/AllCourses"
+import CenterCourses from "./CenterManagers/CenterCourses"
 
 
 
@@ -26,7 +28,7 @@ const App = () =>{
       <Route path = "/center-home/:id" element = {<CenterHomePage/>}/>
       <Route path = "/ho-home" element = {<HoHomePage/>}/>
       <Route path = "/admin/:id" element = {<AdminNavbar/>}/>
-      <Route path = "/demo" element = {<RevenueChart/>}/>
+      <Route path = "/demo" element = {<CenterCourses/>}/>
       <Route path = "/center/:id" element = {<EnquiryTable/>}/>
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
       <Route path = "/manager-login" element = {<Login/>}/>

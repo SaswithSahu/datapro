@@ -1,9 +1,8 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 
 const EnquiryForm = () => {
-  const api = process.env.REACT_APP_API
-  
+  const api = process.env.REACT_APP_API;
   const [formData, setFormData] = useState({
     place: '',
     name: '',
@@ -19,30 +18,62 @@ const EnquiryForm = () => {
     source: '',
     courseFee: '',
     counselorName: '',
-    centerName: "",
-    status:"joined",
-    remarks:""
+    centerName: '',
+    status: 'joined',
+    remarks: ''
   });
-
   const [errors, setErrors] = useState({});
-  const [employee,setEmployee] = useState([]);
-  const center = localStorage.getItem("center");
-  const fetchEmployees = async () => {
-      const response = await fetch(`${api}/employees`)
-      const data = await response.json()
-      const filteredData = data.employees.filter(employee =>employee.center === center && employee.role === 'Councillor')
-      setEmployee(filteredData)
-      
-  }
-  useEffect(() => {
-    fetchEmployees()
-  },[])
+  const [employees, setEmployees] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const center = localStorage.getItem('center');
 
+  const fetchEmployees = async () => {
+    const response = await fetch(`${api}/employees`);
+    const data = await response.json();
+    const filteredData = data.employees.filter(
+      (employee) => employee.center === center && employee.role === 'Councillor'
+    );
+    setEmployees(filteredData);
+  };
+
+  const fetchCourses = async () => {
+    const response = await fetch(`${api}/get-center-courses?center=${center}`);
+    const data = await response.json();
+    setCourses(data.courses);
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchCourses();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === 'coursePreferred') {
+      const selectedCourse = courses.find((course) => course.courseName === value);
+      console.log(selectedCourse);
+      if (selectedCourse) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          coursePreferred: value,
+          courseFee: selectedCourse.centerFees // Use centerFees for course fee
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: value,
+          courseFee: ''
+        }));
+      }
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value
+      }));
+    }
   };
+
   const validate = () => {
     let tempErrors = {};
     if (!formData.place) tempErrors.place = 'Place is required';
@@ -53,11 +84,7 @@ const EnquiryForm = () => {
       tempErrors.collegeSchool = 'College/School is required';
     if (!formData.mobile || !/^\d{10}$/.test(formData.mobile))
       tempErrors.mobile = 'Valid mobile number is required';
-    // if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
-    //   tempErrors.email = 'Valid email is required';
     if (!formData.dob) tempErrors.dob = 'Date of Birth is required';
-    // if (formData.aadhar && !/^\d{12}$/.test(formData.aadhar))
-    //   tempErrors.aadhar = 'Valid Aadhar number is required';
     if (!formData.coursePreferred)
       tempErrors.coursePreferred = 'Course Preferred is required';
     if (!formData.timePreferred)
@@ -65,7 +92,6 @@ const EnquiryForm = () => {
     if (!formData.source) tempErrors.source = 'Source is required';
     if (!formData.counselorName)
       tempErrors.counselorName = 'Counselor Name is required';
-    // if (!formData.centerName) tempErrors.centerName = 'Center Name is required';
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -73,26 +99,27 @@ const EnquiryForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("jwt_token");
+    const token = localStorage.getItem('jwt_token');
     if (validate()) {
       try {
-        const filteredFormData = Object.fromEntries(
-          Object.entries(formData).filter(([key, value]) => value.trim() !== '')
-        );
-        filteredFormData.centerName = center;
+        // const filteredFormData = Object.fromEntries(
+        //   Object.entries(formData).filter(([key, value]) => value.trim() !== '')
+        // );
+        formData.centerName = center;
         const response = await fetch(`${api}/enquiries`, {
           method: 'POST',
           headers: {
-            
             'Content-Type': 'application/json',
-            'Authorization': token,
+            Authorization: token
           },
           mode: 'cors',
-          body: JSON.stringify(filteredFormData),
+          body: JSON.stringify(formData)
         });
+        
         const data = await response.json();
+        console.log(data);
         if (!response.ok) {
-          alert("Invalid Access")
+          alert('Invalid Access');
           throw new Error('Failed to submit form data');
         }
         alert('Registered Successfully');
@@ -111,7 +138,7 @@ const EnquiryForm = () => {
           source: '',
           courseFee: '',
           counselorName: '',
-          remarks:""
+          remarks: ''
         });
       } catch (error) {
         console.error('Error submitting form data:', error.message);
@@ -225,12 +252,18 @@ const EnquiryForm = () => {
       </div>
       <div className="form-group">
         <label>Course Preferred:</label>
-        <input
-          type="text"
+        <select
           name="coursePreferred"
           value={formData.coursePreferred}
           onChange={handleChange}
-        />
+        >
+          <option value="" key = " ">Select</option>
+          {courses.map((course) => (
+            <option key={course.courseName} value={course._id}>
+              {course.courseName}
+            </option>
+          ))}
+        </select>
         {errors.coursePreferred && (
           <span className="error">{errors.coursePreferred}</span>
         )}
@@ -253,11 +286,7 @@ const EnquiryForm = () => {
       </div>
       <div className="form-group">
         <label>How did you come to know about DATAPRO:</label>
-        <select
-          name="source"
-          value={formData.source}
-          onChange={handleChange}
-        >
+        <select name="source" value={formData.source} onChange={handleChange}>
           <option value="">Select</option>
           <option value="friends">Friends</option>
           <option value="relatives">Relatives</option>
@@ -276,62 +305,35 @@ const EnquiryForm = () => {
           name="courseFee"
           value={formData.courseFee}
           onChange={handleChange}
+          readOnly
         />
         {errors.courseFee && <span className="error">{errors.courseFee}</span>}
       </div>
-      <div className='form-group'>
-      <label>Counselor Name:</label>
-      <select
+      <div className="form-group">
+        <label>Counselor Name:</label>
+        <select
           name="counselorName"
           value={formData.counselorName}
           onChange={handleChange}
         >
-        <option value = "">Select</option>
-         {employee.map(each =>(
-          <option key = {each.username} value = {each.username}>{each.username}</option>
-         ))}
+          <option value="">Select</option>
+          {employees.map((employee) => (
+            <option key={employee.username} value={employee.username}>
+              {employee.username}
+            </option>
+          ))}
         </select>
         {errors.counselorName && (
           <span className="error">{errors.counselorName}</span>
         )}
       </div>
-      {/* <div className="form-group">
-        <label>Counselor Name:</label>
-        <input
-          type="text"
-          name="counselorName"
-          value={formData.counselorName}
-          onChange={handleChange}
-        />
-        {errors.counselorName && (
-          <span className="error">{errors.counselorName}</span>
-        )}
-      </div> */}
-      {/* <div className="form-group">
-        <label>Center Name:</label>
-        <select
-          name="centerName"
-          value={formData.centerName}
-          onChange={handleChange}
-        >
-          <option value="">Select</option>
-          <option value="DWK">DWK</option>
-          <option value="MVP">MVP</option>
-          <option value="GWK">GWK</option>
+      <div className="form-group">
+        <label>Status:</label>
+        <select name="status" value={formData.status} onChange={handleChange}>
+          <option value="joined">Joined</option>
+          <option value="notJoined">Not Joined</option>
         </select>
-        {errors.centerName && <span className="error">{errors.centerName}</span>}
-      </div>*/}
-       <div className="form-group">
-         <label>Status:</label>
-         <select
-           name="status"
-           value={formData.status}
-           onChange={handleChange}
-         >
-           <option value="joined">Joined</option>
-           <option value="notJoined">Not Joined</option>
-        </select>
-      </div> 
+      </div>
       <div className="form-group">
         <label>Remarks:</label>
         <textarea

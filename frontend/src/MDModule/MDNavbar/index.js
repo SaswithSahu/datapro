@@ -6,6 +6,7 @@ import ManagerRegistration from '../ManagerRegistration';
 import EnquiresAndAdmissions from '../EnquiresAndAdmissions';
 import CenterAdmissions from '../CenterAdmissions';
 import RevenueChart from '../Revenue';
+import AddCourse from '../AddCourse';
 
 const MDSidebar = () => {
     const {id} = useParams()
@@ -37,6 +38,10 @@ const MDSidebar = () => {
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Admissions & Enquiries</span> </a>
                             </li>
                             <li>
+                                    <a href="/md-navbar/add-course" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Add Course</span> </a>
+                            </li>
+                            <li>
                                 <a href="/md-navbar/revenue" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Revenue</span> </a>
                             </li>
@@ -57,6 +62,7 @@ const MDSidebar = () => {
                  {id === 'admissions' && <EnquiresAndAdmissions/>}
                  {id === "center-admissions" && <CenterAdmissions/>}
                  {id === "revenue" && <RevenueChart/>}
+                 {id === "add-course" && <AddCourse/>}
                 </div>
             </div>
         </div>

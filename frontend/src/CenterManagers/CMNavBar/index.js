@@ -3,9 +3,9 @@ import { useParams,useNavigate } from 'react-router-dom';
 import RegisterEmployees from '../RegisterEmployes';
 import EmployeeList from '../EmployeeList';
 import CenterEnquiry from '../CenterEnquiry';
-
 import StudentJoiningStatus from '../StudentJoiningStatus';
-
+import AllCourses from '../AllCourses';
+import CenterCourses from '../CenterCourses';
 //import StudentDetailsView from '../StudentDetailsView';
 // import Centers from '../Centers';
 // import ManagerRegistration from '../ManagerRegistration';
@@ -49,6 +49,14 @@ const CMSidebar = () => {
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Enquiry Status</span> </a>
                             </li>
                             <li>
+                                <a href="/cm-navbar/all-courses" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">All Courses</span> </a>
+                            </li>
+                            <li>
+                                <a href="/cm-navbar/center-courses" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Center Courses</span> </a>
+                            </li>
+                            <li>
                                 <a href="/cm-navbar/register-employee" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Register Employee</span> </a>
                             </li>
@@ -64,6 +72,8 @@ const CMSidebar = () => {
                  {id === 'register-employee' && <RegisterEmployees/>}
                  {id === "employee-list" && <EmployeeList/>}
                  {id === "enquiry-status" && <StudentJoiningStatus/>}
+                 {id  === "all-courses" && <AllCourses/>}
+                 {id  === "center-courses" && <CenterCourses/>}
                 </div>
             </div>
         </div>

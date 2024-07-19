@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 const Employee = require('./model/Employee');
 const Fees = require("./model/Fees")
+const Course = require("./model/Course");
+const CenterCourse = require("./model/centerCourseSchema");
 const path = require('path');
 
 const app = express();
@@ -67,6 +69,8 @@ app.post('/enquiries',authenticateToken, async (req, res) => {
       status,
       remarks
     } = req.body;
+
+    console.log(req.body)
     
     console.log(req.user.center === centerName)
     if(req.user.center !== centerName){
@@ -145,13 +149,13 @@ app.get('/enquiries',async (req, res) => {
   }
 });
 
-app.get('/enquiries-status',authenticateToken,async (req, res) => {
+app.get('/enquiry-status',authenticateToken,async (req, res) => {
+  console.log("Hello")
   try {
       const Councillor = req.user.name
       const enquiries = await Enquiry.find({});
-      const en = enquiries.filter(u => u.counselorName === "p.mounika")
-      console.log(en)
-      res.status(200).json(enquiries);
+      const en = enquiries.filter(u => u.counselorName.toLowerCase() === Councillor.toLowerCase());
+      res.status(200).json(en);
   } catch (err) {
       res.status(500).json({ message: 'Error fetching enquiries', error: err });
   }
@@ -247,8 +251,6 @@ app.post('/admissions',authenticateToken,upload.single('image'), async (req, res
       totalFees, durationOfCourse, feeDueDate, trainer, timings, enrolledId
     } = req.body;
 
-    // console.log('Request body:', req.body);
-    // console.log('File info:', req.file);
 
     const newAdmissionData = {
       IdNo,
@@ -271,7 +273,7 @@ app.post('/admissions',authenticateToken,upload.single('image'), async (req, res
     };
 
     if (req.file) {
-      const imagePath = req.file.path.replace(/\\/g, '/');
+      const imagePath = req.file.path.replace(/\\/g, '/').replace('uploads/', '');
       newAdmissionData.image = imagePath;
     }
 
@@ -304,7 +306,6 @@ app.post('/register-employee', authenticateToken,async (req, res) => {
   try {
 
     const center = req.user.center;
-    console.log(center)
       const existingEmployee = await Employee.findOne({ username });
       if (existingEmployee) {
           return res.status(400).send('Username already exists');
@@ -477,6 +478,106 @@ app.get("/fees",async(req, res) => {
   }
 })
 
+app.post('/add-course', upload.single('courseImage'), async (req, res) => {
+  try {
+    const { courseName, courseFees, courseDuration, category } = req.body;
+    const existingCourse = await Course.findOne({ courseName });
+    if (existingCourse) {
+      return res.status(409).json({ error: 'Course already exists' });
+    }
+    const newCourse = new Course({
+      courseName,
+      courseFees,
+      courseDuration,
+      category
+    });
+
+    if (req.file) {
+      const imagePath = req.file.path.replace(/\\/g, '/').replace('uploads/', '');
+      newCourse.image = imagePath;
+    }
+
+    await newCourse.save();
+    res.status(201).json(newCourse);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add course' });
+  }
+});
+
+app.get('/get-courses', async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch courses' });
+  }
+});
+
+app.post('/add-center-course', async (req, res) => {
+  try {
+    const { courseId, centerName, centerFees } = req.body;
+
+    let centerCourse = await CenterCourse.findOne({ centerName });
+
+    if (centerCourse) {
+      const courseExists = centerCourse.courses.some(
+        course => course.course.toString() === courseId
+      );
+
+      if (courseExists) {
+        return res.status(409).json({ error: 'Course already exists for this center' });
+      }
+
+      centerCourse.courses.push({ course: courseId, centerFees });
+    } else {
+      centerCourse = new CenterCourse({
+        centerName,
+        courses: [{ course: courseId, centerFees }]
+      });
+    }
+
+    await centerCourse.save();
+    res.status(201).json(centerCourse);
+  } catch (error) {
+    console.error('Error adding center course:', error);
+    res.status(500).json({ error: 'Failed to add center course' });
+  }
+});
+
+app.get('/get-center-courses', async (req, res) => {
+  try {
+    const { center } = req.query;
+    if (!center) {
+      return res.status(400).json({ error: 'Center is required' });
+    }
+
+    const centerCourses = await CenterCourse.findOne({ centerName: center })
+      .populate({
+        path: 'courses.course',
+        select: 'courseName courseFees courseDuration image category'
+      })
+      .exec();
+
+    if (!centerCourses) {
+      return res.status(404).json({ error: 'No courses found for this center' });
+    }
+
+    const courses = centerCourses.courses.map(courseItem => ({
+      courseId: courseItem.course._id,
+      centerFees: courseItem.centerFees,
+      courseName: courseItem.course.courseName,
+      courseFees: courseItem.course.courseFees,
+      courseDuration: courseItem.course.courseDuration,
+      image: courseItem.course.image,
+      category: courseItem.course.category
+    }));
+
+    res.status(200).json({ courses });
+  } catch (error) {
+    console.error('Error fetching center courses:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 const PORT = process.env.PORT || 5000;
