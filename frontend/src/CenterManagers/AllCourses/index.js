@@ -1,68 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 
-const AllCourses = () => {
+const CenterCourses = () => {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [newPrice, setNewPrice] = useState('');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const api = process.env.REACT_APP_API;
+  const center = localStorage.getItem('center');
 
   useEffect(() => {
-    // Fetch courses from the database
-    fetch(`${api}/get-courses`)
-      .then(response => response.json())
-      .then(data => {
-        setCourses(data);
-
-        const uniqueCategories = Array.from(new Set(data.map(course => course.category)));
-        setCategories(uniqueCategories);
+    fetch(`${api}/get-center-courses?center=${center}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
       })
-      .catch(error => console.error('Error fetching courses:', error));
-  }, [api]);
+      .then(data => {
+        setCourses(data.courses);
+        const uniqueCategories = Array.from(new Set(data.courses.map(course => course.category)));
+        setCategories(uniqueCategories);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }, [api, center]);
 
-  const filteredCourses = courses.filter(course => 
+  const filteredCourses = courses.filter(course =>
     course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (selectedCategory === '' || course.category === selectedCategory)
   );
 
-  const handleAddClick = (course) => {
-    setSelectedCourse(course);
-    setIsPopupOpen(true);
+  const handleEditClick = (course) => {
+    console.log('Edit course:', course);
   };
 
-  const handleAddCenterPrice = async () => {
-    if (selectedCourse && newPrice) {
-      try {
-        const response = await fetch(`${api}/add-center-course`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            courseId: selectedCourse._id,
-            centerName: localStorage.getItem('center'),
-            centerFees: newPrice
-          })
-        });
-
-        if (response.ok) {
-          alert('Course added successfully');
-          setIsPopupOpen(false);
-          setNewPrice('');
-        } else {
-          alert('Failed to add course');
-        }
-      } catch (error) {
-        console.error('Error adding course:', error);
-      }
-    } else {
-      alert('Please enter a valid price');
-    }
+  const handleDeleteClick = (course) => {
+    console.log('Delete course:', course);
   };
+
+  if (isLoading) {
+    return <div className="all-courses-loading">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="all-courses-error">Error: {error}</div>;
+  }
 
   return (
     <div className="all-courses-container">
@@ -88,45 +76,38 @@ const AllCourses = () => {
         </select>
       </div>
       <div className="all-courses-list">
-        {filteredCourses.map(course => (
-          <div key={course._id} className="all-courses-card">
-            <img src={require(`../../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-courses-image" />
-            <div className="all-courses-details">
-              <h3 className="all-courses-name">{course.courseName}</h3>
-              <p className="all-courses-fees">Fees: {course.courseFees} Rs</p>
-              <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
-              <button 
-                className="all-courses-add-button" 
-                onClick={() => handleAddClick(course)}
-              >
-                Add Course
-              </button>
+        {filteredCourses.length === 0 ? (
+          <div className="all-courses-no-courses">No courses found</div>
+        ) : (
+          filteredCourses.map(course => (
+            <div key={course.courseName} className="all-courses-card">
+              <img src={require(`../../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-courses-image" />
+              <div className="all-courses-details">
+                <h3 className="all-courses-name">{course.courseName}</h3>
+                <p className="all-courses-fees">Actual Fees: {course.courseFees} Rs</p>
+                <p className="all-courses-center-fees">Center Fees: {course.centerFees} Rs</p>
+                <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
+                <div className="all-courses-buttons">
+                  <button 
+                    className="all-courses-edit-button" 
+                    onClick={() => handleEditClick(course)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="all-courses-delete-button" 
+                    onClick={() => handleDeleteClick(course)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      {isPopupOpen && (
-        <div className="all-courses-popup-overlay">
-          <div className="all-courses-popup">
-            <h3 className="all-courses-popup-title">{selectedCourse.courseName}</h3>
-            <p className="all-courses-popup-price">Price: {selectedCourse.courseFees} Rs</p>
-            <div className="all-courses-popup-input">
-              <label htmlFor="centerPrice" className="all-courses-popup-label">Enter Center Price:</label>
-              <input 
-                id="centerPrice"
-                type="number"
-                value={newPrice}
-                onChange={e => setNewPrice(e.target.value)}
-                className="all-courses-popup-field"
-              />
-            </div>
-            <button className="all-courses-popup-add-button" onClick={handleAddCenterPrice}>Add</button>
-            <button className="all-courses-popup-close-button" onClick={() => setIsPopupOpen(false)}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default AllCourses;
+export default CenterCourses;

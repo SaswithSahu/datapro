@@ -2,6 +2,7 @@ import React,{useEffect} from 'react';
 import { useParams,useNavigate} from 'react-router-dom';
 import EnquiryForm from '../EnquiryForm';
 import StudentDetailsView from '../StudentDetailsView';
+import AllCenterCourses from '../../AllCenterCourses';
 
 const Sidebar = () => {
     const {id} = useParams()
@@ -36,6 +37,10 @@ const Sidebar = () => {
                                 <a href="/navbar/student-details" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">View</span> </a>
                             </li>
+                            <li>
+                                <a href="/navbar/courses" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Courses</span> </a>
+                            </li>
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
@@ -46,6 +51,7 @@ const Sidebar = () => {
                 <div className="col py-3" style={{height:"100vh",overflow:"auto"}}>
                  {id === 'enquiry-form' && <EnquiryForm/>}
                  {id === 'student-details' && <StudentDetailsView/>}
+                 {id === 'courses' && <AllCenterCourses/>}
                 </div>
             </div>
         </div>

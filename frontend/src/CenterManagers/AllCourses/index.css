@@ -16,10 +16,9 @@
     border: 1px solid #ccc;
     border-radius: 5px;
   }
-  
-  .all-courses-category-dropdown {
+  .all-courses-category-dropdown{
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
   
   .all-courses-select {

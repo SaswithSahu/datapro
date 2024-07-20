@@ -579,6 +579,40 @@ app.get('/get-center-courses', async (req, res) => {
   }
 });
 
+app.get('/get-all-center-courses', async (req, res) => {
+  try {
+    const centerCourses = await CenterCourse.find({})
+      .populate({
+        path: 'courses.course',
+        select: 'courseName courseFees courseDuration image category'
+      })
+      .exec();
+
+    if (!centerCourses.length) {
+      return res.status(404).json({ error: 'No courses found for any center' });
+    }
+
+    const formattedData = centerCourses.map(centerCourse => ({
+      centerName: centerCourse.centerName,
+      courses: centerCourse.courses.map(courseItem => ({
+        courseId: courseItem.course._id,
+        centerFees: courseItem.centerFees,
+        courseName: courseItem.course.courseName,
+        courseFees: courseItem.course.courseFees,
+        courseDuration: courseItem.course.courseDuration,
+        image: courseItem.course.image,
+        category: courseItem.course.category
+      }))
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    console.error('Error fetching center courses:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

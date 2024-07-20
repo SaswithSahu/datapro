@@ -1,6 +1,5 @@
-
 .courses-card {
-    width: calc(23.333% - 20px);
+    width: calc(28.333% - 20px);
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -21,7 +20,7 @@
 .all-courses-edit-button,
 .all-courses-delete-button {
   flex: 1;
-  padding: 10px;
+  padding: 15px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -46,4 +45,11 @@
 
 .all-courses-delete-button:hover {
   background-color: #e53935;
+}
+
+.all-courses-loading, .all-courses-error, .all-courses-no-courses {
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  margin-top: 20px;
 }
