@@ -1,7 +1,5 @@
 import React,{ useEffect } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
-                                           
-
 import AdmissionForm from '../Form';
 import SearchEnroll from '../SearchEnroll';
 import EnquiryStatus from '../EnquiryStatus';

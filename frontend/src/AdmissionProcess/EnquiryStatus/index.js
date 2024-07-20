@@ -118,6 +118,7 @@ const EnquiryStatus = () => {
             <th className="studentJoinStatus-th">Student Name</th>
             <th className="studentJoinStatus-th">Course Name</th>
             <th className="studentJoinStatus-th">Phone Number</th>
+            <th className='studentJoinStatus-th'>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -131,6 +132,9 @@ const EnquiryStatus = () => {
               <td className="studentJoinStatus-td">{enquiry.name}</td>
               <td className="studentJoinStatus-td">{enquiry.coursePreferred}</td>
               <td className="studentJoinStatus-td">{enquiry.mobile}</td>
+              <td className="studentJoinStatus-td">
+                {enquiry.status === "joined"? <button>Edit</button>:<button>Follow Up</button>} 
+              </td>
             </tr>
           ))}
         </tbody>

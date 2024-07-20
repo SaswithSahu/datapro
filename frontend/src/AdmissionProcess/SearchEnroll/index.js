@@ -1,4 +1,4 @@
-// SearchEnroll.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
@@ -73,9 +73,7 @@ const SearchEnroll = () => {
                 <td>{item.name}</td>
                 <td>{item.address}</td>
                 <td>
-                  <button className="enroll-button" onClick={() => handleEnroll(item._id)}>
-                    Enroll
-                  </button>
+                  {item.status === "joined"? <button>Edit</button>:<button onClick={() => handleEnroll(item._id)}>Enroll</button>} 
                 </td>
               </tr>
             ))}

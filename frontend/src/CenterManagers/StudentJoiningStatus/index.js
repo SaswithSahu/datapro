@@ -9,13 +9,16 @@ const StudentJoiningStatus = () => {
   const [joinedCount, setJoinedCount] = useState(0);
   const [notJoinedCount, setNotJoinedCount] = useState(0);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('today');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [councillorFilter, setCouncillorFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [employees, setEmployees] = useState([]);
   const center = localStorage.getItem('center');
+  const api = process.env.REACT_APP_API;
 
   useEffect(() => {
-    fetch('http://localhost:5000/enquiries')
+    fetch(`${api}/enquiries`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -33,17 +36,33 @@ const StudentJoiningStatus = () => {
         setError(error);
         setLoading(false);
       });
+      
   }, []);
 
   useEffect(() => {
     filterEnquiries();
-  }, [statusFilter, dateFilter, startDate, endDate]);
+    fetchEmployees()
 
+  }, [statusFilter, dateFilter, startDate, endDate,councillorFilter]);
+
+  const fetchEmployees = async () => {
+    const response = await fetch(`${api}/employees`);
+    const data = await response.json();
+    const filteredData = data.employees.filter(
+      (employee) => employee.center === center && employee.role === 'Councillor'
+    );
+    setEmployees(filteredData);
+  };
   const filterEnquiries = () => {
     let filtered = enquiries;
 
     if (statusFilter !== 'all') {
       filtered = filtered.filter(enquiry => enquiry.status === statusFilter);
+    }
+
+    if ( councillorFilter!== 'all') {
+      console.log(councillorFilter);
+      filtered = filtered.filter(enquiry => enquiry.counselorName.toLowerCase() === councillorFilter);
     }
 
     if (dateFilter !== 'all') {
@@ -95,6 +114,12 @@ const StudentJoiningStatus = () => {
           <option value="today">Today</option>
           <option value="yesterday">Yesterday</option>
           <option value="lastMonth">Last Month</option>
+        </select>
+        <select className="studentJoinStatus-filter" value={councillorFilter} onChange={(e) => setCouncillorFilter(e.target.value)}>
+          <option value="all">All</option>
+          {employees.map(e =>(
+            <option value = {e.username.toLowerCase()} key = {e._id}>{e.username}</option>
+          ))}
         </select>
         <input className="studentJoinStatus-filter" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         <input className="studentJoinStatus-filter" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
