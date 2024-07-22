@@ -3,11 +3,12 @@ import './index.css'; // Import your CSS file for styling
 
 const FeesRemainders = () => {
   const [students, setStudents] = useState([]);
+  const api = process.env.REACT_APP_API;
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/fees-due-today');
+        const response = await fetch(`${api}/fees-due-today`);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }

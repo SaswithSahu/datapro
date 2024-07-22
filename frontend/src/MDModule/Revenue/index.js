@@ -3,6 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import './index.css'; // Import your CSS file for styling
 
 const RevenueChart = () => {
+  const api = process.env.REACT_APP_API;
   const [revenueData, setRevenueData] = useState({
     labels: [],
     datasets: [
@@ -30,8 +31,8 @@ const RevenueChart = () => {
   useEffect(() => {
     const fetchRevenueData = async () => {
       try {
-        const admissionsResponse = await fetch('http://localhost:5000/admissions');
-        const feesResponse = await fetch('http://localhost:5000/fees');
+        const admissionsResponse = await fetch(`${api}/admissions`);
+        const feesResponse = await fetch(`${api}/fees`);
 
         if (!admissionsResponse.ok || !feesResponse.ok) {
           throw new Error('Failed to fetch data');
