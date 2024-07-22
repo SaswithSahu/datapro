@@ -119,7 +119,7 @@ const PayFees = () => {
       {!student && !loading && !error && <p className="initial-view">Enter the Student ID to get details</p>}
       {student && !loading && (
         <div className="student-card">
-          <img src={require(`../../../../backend/uploads/${student.image}`)} alt={student.name} className="student-pic" />
+          <img src={`${api}/uploads/${student.image}`} alt={student.name} className="student-pic" />
           <div className="student-info">
             <h2 className="student-name">{student.name}</h2>
             <p className="student-course"><strong>Course:</strong> {student.courseEnrolled}</p>

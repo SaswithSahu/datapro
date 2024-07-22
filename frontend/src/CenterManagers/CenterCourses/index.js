@@ -81,7 +81,7 @@ const CenterCourses = () => {
         ) : (
           filteredCourses.map(course => (
             <div key={course.courseName} className="courses-card">
-              <img src={require(`../../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-center-courses-image" />
+              <img src={`${api}uploads/${course.image}`} alt={course.courseName} className="all-center-courses-image" />
               <div className="all-courses-details">
                 <h3 className="all-courses-name">{course.courseName}</h3>
                 <p className="all-center-courses-fees">Actual Fees: {course.courseFees} Rs</p>

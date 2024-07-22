@@ -92,7 +92,7 @@ const AllCenterCourses = () => {
         <div className="all-center-courses-list">
           {centerSpecificCourses.map(course => (
             <div key={course._id} className="all-center-courses-card">
-              <img src={require(`../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-center-courses-image" />
+              <img src={`${api}/uploads/${course.image}`} alt={course.courseName} className="all-center-courses-image" />
               <div className="all-center-courses-details">
                 <h3 className="all-center-courses-name">{course.courseName}</h3>
                 <p className="all-center-courses-category">Category: {course.category}</p>
