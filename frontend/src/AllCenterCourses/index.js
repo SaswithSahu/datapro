@@ -9,27 +9,33 @@ const AllCenterCourses = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [centers, setCenters] = useState([]);
   const [selectedCenter, setSelectedCenter] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const api = process.env.REACT_APP_API;
 
   useEffect(() => {
-    fetch(`${api}/get-courses`)
-      .then(response => response.json())
-      .then(data => {
-        setCourses(data);
-        const uniqueCategories = Array.from(new Set(data.map(course => course.category)));
-        setCategories(uniqueCategories);
-      })
-      .catch(error => console.error('Error fetching courses:', error));
+    setLoading(true);
+    Promise.all([
+      fetch(`${api}/get-courses`).then(response => response.json()),
+      fetch(`${api}/get-all-center-courses`).then(response => response.json())
+    ])
+      .then(([coursesData, centerCoursesData]) => {
+        setCourses(coursesData);
+        setCenterCourses(centerCoursesData);
 
-    fetch(`${api}/get-all-center-courses`)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setCenterCourses(data);
-        const uniqueCenters = Array.from(new Set(data.map(centerCourse => centerCourse.centerName)));
+        const uniqueCategories = Array.from(new Set(coursesData.map(course => course.category)));
+        setCategories(uniqueCategories);
+
+        const uniqueCenters = Array.from(new Set(centerCoursesData.map(centerCourse => centerCourse.centerName)));
         setCenters(uniqueCenters);
+
+        setLoading(false);
       })
-      .catch(error => console.error('Error fetching center courses:', error));
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data');
+        setLoading(false);
+      });
   }, [api]);
 
   const filteredCourses = courses.filter(course =>
@@ -44,7 +50,6 @@ const AllCenterCourses = () => {
       })) || []
     : filteredCourses;
 
-    console.log(centerCourses)
   return (
     <div className="all-center-courses-container">
       <div className="all-center-courses-search-bar">
@@ -75,23 +80,29 @@ const AllCenterCourses = () => {
           <option value="">All Centers</option>
           {centers.map((center, index) => (
             <option key={index} value={center}>{center}</option>
-          ))} 
-         
+          ))}
         </select>
       </div>
-      <div className="all-center-courses-list">
-        {centerSpecificCourses.map(course => (
-          <div key={course._id} className="all-center-courses-card">
-            <img src={require(`../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-center-courses-image" />
-            <div className="all-center-courses-details">
-              <h3 className="all-center-courses-name">{course.courseName}</h3>
-              <p className="all-center-courses-category">Category: {course.category}</p>
-              <p className="all-center-courses-fees">Fees: {course.centerFees || course.courseFees} Rs</p>
-              <p className="all-center-courses-duration">Duration: {course.courseDuration} days</p>
+      {loading && <div className="loading-view">Loading...</div>}
+      {error && !loading && <div className="error-view">{error}</div>}
+      {!loading && !error && centerSpecificCourses.length === 0 && (
+        <div className="no-data-view">No courses found.</div>
+      )}
+      {!loading && !error && centerSpecificCourses.length > 0 && (
+        <div className="all-center-courses-list">
+          {centerSpecificCourses.map(course => (
+            <div key={course._id} className="all-center-courses-card">
+              <img src={require(`../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-center-courses-image" />
+              <div className="all-center-courses-details">
+                <h3 className="all-center-courses-name">{course.courseName}</h3>
+                <p className="all-center-courses-category">Category: {course.category}</p>
+                <p className="all-center-courses-fees">Fees: {course.centerFees || course.courseFees} Rs</p>
+                <p className="all-center-courses-duration">Duration: {course.courseDuration} days</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

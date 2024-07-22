@@ -142,10 +142,6 @@ const EnquiryStatus = () => {
     </div>
   );
 
-  function handleRemark(id) {
-    console.log(`Remark button clicked for enquiry ID: ${id}`);
-    // Add your logic here for handling remarks
-  }
 };
 
 export default EnquiryStatus;

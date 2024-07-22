@@ -9,19 +9,24 @@ const AllCourses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [newPrice, setNewPrice] = useState('');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const api = process.env.REACT_APP_API;
 
   useEffect(() => {
-    // Fetch courses from the database
     fetch(`${api}/get-courses`)
       .then(response => response.json())
       .then(data => {
         setCourses(data);
-
         const uniqueCategories = Array.from(new Set(data.map(course => course.category)));
         setCategories(uniqueCategories);
+        setLoading(false);
       })
-      .catch(error => console.error('Error fetching courses:', error));
+      .catch(error => {
+        console.error('Error fetching courses:', error);
+        setError('Failed to load courses.');
+        setLoading(false);
+      });
   }, [api]);
 
   const filteredCourses = courses.filter(course => 
@@ -64,6 +69,14 @@ const AllCourses = () => {
     }
   };
 
+  if (loading) {
+    return <div className="all-courses-loading">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="all-courses-error">{error}</div>;
+  }
+
   return (
     <div className="all-courses-container">
       <div className="all-courses-search-bar">
@@ -88,22 +101,26 @@ const AllCourses = () => {
         </select>
       </div>
       <div className="all-courses-list">
-        {filteredCourses.map(course => (
-          <div key={course._id} className="all-courses-card">
-            <img src={require(`../../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-courses-image" />
-            <div className="all-courses-details">
-              <h3 className="all-courses-name">{course.courseName}</h3>
-              <p className="all-courses-fees">Fees: {course.courseFees} Rs</p>
-              <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
-              <button 
-                className="all-courses-add-button" 
-                onClick={() => handleAddClick(course)}
-              >
-                Add Course
-              </button>
+        {filteredCourses.length > 0 ? (
+          filteredCourses.map(course => (
+            <div key={course._id} className="all-courses-card">
+              <img src={require(`../../../../backend/uploads/${course.image}`)} alt={course.courseName} className="all-courses-image" />
+              <div className="all-courses-details">
+                <h3 className="all-courses-name">{course.courseName}</h3>
+                <p className="all-courses-fees">Fees: {course.courseFees} Rs</p>
+                <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
+                <button 
+                  className="all-courses-add-button" 
+                  onClick={() => handleAddClick(course)}
+                >
+                  Add Course
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="all-courses-no-data">No courses found.</div>
+        )}
       </div>
       {isPopupOpen && (
         <div className="all-courses-popup-overlay">

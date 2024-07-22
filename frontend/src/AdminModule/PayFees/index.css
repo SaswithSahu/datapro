@@ -1,5 +1,3 @@
-/* Ensure you have these styles in your index.css file */
-
 .student-details-container {
   display: flex;
   flex-direction: column;
@@ -41,9 +39,22 @@
   background-color: #0056b3;
 }
 
+.loading-view {
+  color: #007bff;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
 .error-message {
   color: red;
-  margin-top: 10px;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.initial-view {
+  color: #555;
+  font-size: 18px;
+  margin-top: 20px;
 }
 
 .student-card {
@@ -102,15 +113,6 @@
   background-color: #218838;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -121,7 +123,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  animation: fadeIn 0.3s;
 }
 
 .modal-content {
@@ -129,8 +131,9 @@
   padding: 20px;
   border-radius: 10px;
   width: 400px;
+  max-width: 80%;
   position: relative;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s;
 }
 
 .close-modal {
@@ -139,27 +142,35 @@
   right: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #555;
 }
 
 .modal-input-container {
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
 }
 
 .modal-label {
-  display: block;
   margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
 }
 
 .modal-input {
-  width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
   font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+.modal-input:focus {
+  border-color: #007bff;
 }
 
 .modal-pay-button {
-  padding: 10px 20px;
+  padding: 10px 15px;
   font-size: 16px;
   color: #fff;
   background-color: #007bff;
@@ -167,9 +178,39 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 100%;
 }
 
 .modal-pay-button:hover {
   background-color: #0056b3;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
