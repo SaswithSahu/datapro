@@ -19,7 +19,7 @@ const AllCourses = () => {
       .then(data => {
         setCourses(data);
         console.log(data)
-        const uniqueCategories = Array.from(new Set(data.map(course => course.Category)));
+        const uniqueCategories = Array.from(new Set(data.map(course => course.category)));
         setCategories(uniqueCategories);
         setLoading(false);
       })
@@ -32,7 +32,7 @@ const AllCourses = () => {
 
   const filteredCourses = courses.filter(course => 
     // course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedCategory === '' || course.Category === selectedCategory)
+    (selectedCategory === '' || course.category === selectedCategory)
   );
 
 
@@ -108,9 +108,9 @@ const AllCourses = () => {
             <div key={course._id} className="all-courses-card">
               {/* <img src={`${api}/uploads/${course.image}`} alt={course.courseName} className="all-courses-image" /> */}
               <div className="all-courses-details">
-                <h3 className="all-courses-name">{course.CourseName}</h3>
-                <p className="all-courses-fees">Fees: {course.CourseFees} Rs</p>
-                <p className="all-courses-duration">Duration: {course.CourseDuration} days</p>
+                <h3 className="all-courses-name">{course.courseName}</h3>
+                <p className="all-courses-fees">Fees: {course.courseFees} Rs</p>
+                <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
                 <button 
                   className="all-courses-add-button" 
                   onClick={() => handleAddClick(course)}
@@ -127,8 +127,8 @@ const AllCourses = () => {
       {isPopupOpen && (
         <div className="all-courses-popup-overlay">
           <div className="all-courses-popup">
-            <h3 className="all-courses-popup-title">{selectedCourse.CourseName}</h3>
-            <p className="all-courses-popup-price">Price: {selectedCourse.CourseFees} Rs</p>
+            <h3 className="all-courses-popup-title">{selectedCourse.courseName}</h3>
+            <p className="all-courses-popup-price">Price: {selectedCourse.courseFees} Rs</p>
             <div className="all-courses-popup-input">
               <label htmlFor="centerPrice" className="all-courses-popup-label">Enter Center Price:</label>
               <input 

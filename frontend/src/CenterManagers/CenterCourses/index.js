@@ -21,6 +21,7 @@ const CenterCourses = () => {
       })
       .then(data => {
         setCourses(data.courses);
+        console.log(data.courses)
         const uniqueCategories = Array.from(new Set(data.courses.map(course => course.category)));
         setCategories(uniqueCategories);
         setIsLoading(false);
@@ -36,12 +37,13 @@ const CenterCourses = () => {
   }, [api, center]);
 
   const handleDeleteClick = (course) => {
-    fetch(`${api}/delete-course`, {
+    console.log(course);
+    fetch(`${api}/delete-center-course`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ courseId: course._id, center }),
+      body: JSON.stringify({ centerName:center,courseId:course.courseId }),
     })
       .then(response => {
         if (!response.ok) {
@@ -50,6 +52,7 @@ const CenterCourses = () => {
         return response.json();
       })
       .then(() => {
+        alert("Deleted Successfully")
         fetchCourses();
       })
       .catch(error => {
@@ -103,7 +106,7 @@ const CenterCourses = () => {
         ) : (
           filteredCourses.map(course => (
             <div key={course._id} className="courses-card">
-              <img src={`${api}uploads/${course.image}`} alt={course.courseName} className="all-center-courses-image" />
+              {/* <img src={`${api}uploads/${course.image}`} alt={course.courseName} className="all-center-courses-image" /> */}
               <div className="all-courses-details">
                 <h3 className="all-courses-name">{course.courseName}</h3>
                 <p className="all-center-courses-fees">Actual Fees: {course.courseFees} Rs</p>

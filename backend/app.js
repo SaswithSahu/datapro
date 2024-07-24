@@ -613,17 +613,35 @@ app.get('/get-all-center-courses', async (req, res) => {
 });
 
 app.delete('/delete-center-course', async (req, res) => {
-  const { courseId, center } = req.body;
+  const { centerName, courseId } = req.body;
+  console.log(req.body)
+
   try {
-    const course = await CenterCourse.findOneAndDelete({ _id: courseId, center });
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
+    // Find the center course entry
+    const centerCourse = await CenterCourse.findOne({ centerName });
+    if (!centerCourse) {
+      return res.status(404).json({ error: 'Center not found' });
     }
-    res.json({ message: 'Course deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    // Find the course in the center's courses array
+    const courseIndex = centerCourse.courses.findIndex(course => course.course.toString() === courseId);
+    if (courseIndex === -1) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    // Remove the course from the array
+    centerCourse.courses.splice(courseIndex, 1);
+
+    // Save the updated center course entry
+    await centerCourse.save();
+
+    res.status(200).json({ message: 'Course deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting course:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 
