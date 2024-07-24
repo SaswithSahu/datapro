@@ -11,7 +11,7 @@ const CenterCourses = () => {
   const api = process.env.REACT_APP_API;
   const center = localStorage.getItem('center');
 
-  useEffect(() => {
+  const fetchCourses = () => {
     fetch(`${api}/get-center-courses?center=${center}`)
       .then(response => {
         if (!response.ok) {
@@ -29,7 +29,33 @@ const CenterCourses = () => {
         setError(error.message);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchCourses();
   }, [api, center]);
+
+  const handleDeleteClick = (course) => {
+    fetch(`${api}/delete-course`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ courseId: course._id, center }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete course');
+        }
+        return response.json();
+      })
+      .then(() => {
+        fetchCourses();
+      })
+      .catch(error => {
+        setError(error.message);
+      });
+  };
 
   const filteredCourses = courses.filter(course =>
     course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -38,10 +64,6 @@ const CenterCourses = () => {
 
   const handleEditClick = (course) => {
     console.log('Edit course:', course);
-  };
-
-  const handleDeleteClick = (course) => {
-    console.log('Delete course:', course);
   };
 
   if (isLoading) {
@@ -80,7 +102,7 @@ const CenterCourses = () => {
           <div className="all-center-courses-no-courses">No courses found</div>
         ) : (
           filteredCourses.map(course => (
-            <div key={course.courseName} className="courses-card">
+            <div key={course._id} className="courses-card">
               <img src={`${api}uploads/${course.image}`} alt={course.courseName} className="all-center-courses-image" />
               <div className="all-courses-details">
                 <h3 className="all-courses-name">{course.courseName}</h3>
