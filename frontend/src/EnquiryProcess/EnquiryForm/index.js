@@ -39,6 +39,10 @@ const EnquiryForm = () => {
   const fetchCourses = async () => {
     const response = await fetch(`${api}/get-center-courses?center=${center}`);
     const data = await response.json();
+    if(data.courses === undefined){
+      setCourses([]);
+      return
+    }
     setCourses(data.courses);
   };
 

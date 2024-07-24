@@ -61,7 +61,6 @@ const StudentJoiningStatus = () => {
     }
 
     if ( councillorFilter!== 'all') {
-      console.log(councillorFilter);
       filtered = filtered.filter(enquiry => enquiry.counselorName.toLowerCase() === councillorFilter);
     }
 
@@ -156,10 +155,10 @@ const StudentJoiningStatus = () => {
     </div>
   );
 
-  function handleRemark(id) {
-    console.log(`Remark button clicked for enquiry ID: ${id}`);
-    // Add your logic here for handling remarks
-  }
+  // function handleRemark(id) {
+  //   console.log(`Remark button clicked for enquiry ID: ${id}`);
+  //   // Add your logic here for handling remarks
+  // }
 };
 
 export default StudentJoiningStatus;
