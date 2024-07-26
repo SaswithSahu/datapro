@@ -92,6 +92,7 @@ const AdmissionForm = () => {
                  {...register('aadharNo', { 
                    required: true,
                    maxLength: 12,
+                   minLength:12,
                    pattern: /^[0-9]+$/
                  })} />
           {errors.aadharNo && <span className="error">
@@ -105,6 +106,7 @@ const AdmissionForm = () => {
                  {...register('mobileNo', { 
                    required: true,
                    maxLength: 10,
+                   minLength:10,
                    pattern: /^[0-9]+$/
                  })} />
           {errors.mobileNo && <span className="error">
