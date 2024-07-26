@@ -12,6 +12,7 @@ const Employee = require('./model/Employee');
 const Fees = require("./model/Fees")
 const Course = require("./model/Course");
 const CenterCourse = require("./model/centerCourseSchema");
+const { FollowUp } = require('./model/FollowUp'); 
 const path = require('path');
 
 const app = express();
@@ -48,6 +49,62 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const getRemainders = async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const remainders = await FollowUp.aggregate([
+      {
+        $unwind: "$remarks"
+      },
+      {
+        $match: {
+          "remarks.nextFollowUpDate": {
+            $gte: today,
+            $lte: endOfDay
+          }
+        }
+      },
+      {
+        $sort: {
+          "remarks.followUpDate": -1 
+        }
+      },
+      {
+        $group: {
+          _id: "$enquiryId",
+          studentName: { $first: "$studentName" },
+          studentContact: { $first: "$studentContact" },
+          courseInquired: { $first: "$courseInquired" },
+          lastRemark: { $first: "$remarks" }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          studentName: 1,
+          studentContact: 1,
+          courseInquired: 1,
+          lastRemark: {
+            followUpDate: 1,
+            notes: 1,
+            nextFollowUpDate: 1
+          }
+        }
+      }
+    ]);
+
+    return remainders;
+  } catch (error) {
+    console.error('Error fetching remainders:', error.message);
+    throw error;
+  }
+};
+
+
 app.post('/enquiries',authenticateToken, async (req, res) => {
   try {
     const {
@@ -70,9 +127,6 @@ app.post('/enquiries',authenticateToken, async (req, res) => {
       remarks
     } = req.body;
 
-    console.log(req.body)
-    
-    console.log(req.user.center === centerName)
     if(req.user.center !== centerName){
        return res.status(500).json("Invalid Access");
     }
@@ -150,7 +204,6 @@ app.get('/enquiries',async (req, res) => {
 });
 
 app.get('/enquiry-status',authenticateToken,async (req, res) => {
-  console.log("Hello")
   try {
       const Councillor = req.user.name
       const enquiries = await Enquiry.find({});
@@ -352,6 +405,19 @@ app.post('/login-employee', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
   }
 });
+
+app.delete("/delete-employees/:id",async(req, res) => {
+  const {id} = req.params
+  console.log(id)
+  try{
+    const d = await Employee.findByIdAndDelete({ _id:id });
+    res.status(201).json("Deleted Successful")
+    console.log("deleted",d)
+  }catch(e){
+    res.status(500).json("Failed To Delete")
+    console.log(e)
+  }
+})
 
 app.get("/employees",async(req, res) => {
   try{
@@ -617,22 +683,17 @@ app.delete('/delete-center-course', async (req, res) => {
   console.log(req.body)
 
   try {
-    // Find the center course entry
     const centerCourse = await CenterCourse.findOne({ centerName });
     if (!centerCourse) {
       return res.status(404).json({ error: 'Center not found' });
     }
 
-    // Find the course in the center's courses array
     const courseIndex = centerCourse.courses.findIndex(course => course.course.toString() === courseId);
     if (courseIndex === -1) {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    // Remove the course from the array
     centerCourse.courses.splice(courseIndex, 1);
-
-    // Save the updated center course entry
     await centerCourse.save();
 
     res.status(200).json({ message: 'Course deleted successfully' });
@@ -642,8 +703,96 @@ app.delete('/delete-center-course', async (req, res) => {
   }
 });
 
+app.post('/add-follow-up', async (req, res) => {
+  try {
+    const { enquiryId, studentName, studentContact, courseInquired, notes, nextFollowUpDate } = req.body;
+
+    if (!enquiryId || !notes || !nextFollowUpDate || !studentName || !studentContact || !courseInquired) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const followUpDate = new Date();
+
+    let followUp = await FollowUp.findOne({ enquiryId });
+    if (followUp) {
+      if (followUp.remarks.length > 0) {
+        followUp.remarks[followUp.remarks.length - 1].remainderStatus = 'completed';
+      }
+
+      const remark = {
+        followUpDate,
+        notes,
+        nextFollowUpDate,
+        remainderStatus: 'pending'
+      };
+      followUp.remarks.push(remark);
+
+      followUp.status = 'active';
+
+      await followUp.save();
+
+      res.status(200).json({ message: 'Remark added successfully', followUp });
+    } else {
+      followUp = new FollowUp({
+        enquiryId,
+        studentName,
+        studentContact,
+        courseInquired,
+        remarks: [{
+          followUpDate,
+          notes,
+          nextFollowUpDate,
+          remainderStatus: 'pending'
+        }],
+        status: 'active'
+      });
+      await followUp.save();
+
+      res.status(201).json({ message: 'New enquiry created with remark', followUp });
+    }
+  } catch (error) {
+    console.error('Server error:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 
+
+app.get('/followup-remainders', async (req, res) => {
+  try {
+    const remainders = await getRemainders();
+    res.status(200).json(remainders);
+  } catch (error) {
+    console.error('Error in /remainders endpoint:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.get("/all-remainders", async (req, res) => {
+  try {
+    const data = await FollowUp.find();
+    const latestRemarks = data.map(followUp => {
+      let latestRemark = null;
+
+      if (followUp.remarks && followUp.remarks.length > 0) {
+        followUp.remarks.sort((a, b) => b.followUpDate - a.followUpDate);
+        latestRemark = followUp.remarks[0];
+      }
+
+      return {
+        _id: followUp._id,
+        enquiryId: followUp.enquiryId,
+        studentName: followUp.studentName,
+        studentContact: followUp.studentContact,
+        courseInquired: followUp.courseInquired,
+        latestRemark: latestRemark
+      };
+    });
+
+    res.status(201).json({ data: latestRemarks });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

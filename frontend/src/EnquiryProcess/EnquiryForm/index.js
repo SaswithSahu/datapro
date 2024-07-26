@@ -19,7 +19,7 @@ const EnquiryForm = () => {
     courseFee: '',
     counselorName: '',
     centerName: '',
-    status: 'joined',
+    status: '',
     remarks: ''
   });
   const [errors, setErrors] = useState({});
@@ -334,6 +334,7 @@ const EnquiryForm = () => {
       <div className="form-group">
         <label>Status:</label>
         <select name="status" value={formData.status} onChange={handleChange}>
+          <option value="">Select</option>
           <option value="joined">Joined</option>
           <option value="notJoined">Not Joined</option>
         </select>

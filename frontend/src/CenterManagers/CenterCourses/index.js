@@ -111,7 +111,7 @@ const CenterCourses = () => {
                 <h3 className="all-courses-name">{course.courseName}</h3>
                 <p className="all-center-courses-fees">Actual Fees: {course.courseFees} Rs</p>
                 <p>Center Fees: {course.centerFees} Rs</p>
-                <p className="all-center-courses-duration">Duration: {course.courseDuration} days</p>
+                <p className="all-center-courses-duration">Duration: {course.courseDuration}</p>
                 <div className="all-center-courses-buttons">
                   <button 
                     className="all-courses-edit-button" 

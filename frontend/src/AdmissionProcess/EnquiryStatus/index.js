@@ -12,6 +12,11 @@ const EnquiryStatus = () => {
   const [dateFilter, setDateFilter] = useState('today');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const [followUpNotes, setFollowUpNotes] = useState('');
+  const [nextFollowUpDate, setNextFollowUpDate] = useState('');
+
   const center = localStorage.getItem('center');
   const token = localStorage.getItem("jwt_token");
   const api = process.env.REACT_APP_API;
@@ -36,7 +41,6 @@ const EnquiryStatus = () => {
         setEnquiries(filteredData);
         setFilteredEnquiries(filteredData);
         setLoading(false);
-
       })
       .catch(error => {
         setError(error);
@@ -81,6 +85,47 @@ const EnquiryStatus = () => {
     const notJoined = filtered.length - joined;
     setJoinedCount(joined);
     setNotJoinedCount(notJoined);
+  };
+
+  const handleFollowUpClick = (enquiry) => {
+    setSelectedEnquiry(enquiry);
+    setShowPopup(true);
+  };
+
+  const handleSaveFollowUp = () => {
+   
+    const followUpData = {
+      enquiryId: selectedEnquiry._id,
+      studentName: selectedEnquiry.name,
+      studentContact:selectedEnquiry.mobile,
+      courseInquired:selectedEnquiry.coursePreferred,
+      notes: followUpNotes,
+      nextFollowUpDate: nextFollowUpDate
+    };
+
+    fetch(`${api}/add-follow-up`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify(followUpData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('Follow-up added successfully');
+        setShowPopup(false);
+        setFollowUpNotes("");
+        setNextFollowUpDate("");
+      })
+      .catch(error => {
+        console.error('Error adding follow-up:', error);
+      });
   };
 
   if (loading) {
@@ -133,15 +178,41 @@ const EnquiryStatus = () => {
               <td className="studentJoinStatus-td">{enquiry.coursePreferred}</td>
               <td className="studentJoinStatus-td">{enquiry.mobile}</td>
               <td className="studentJoinStatus-td">
-                {enquiry.status === "joined"? <button>Edit</button>:<button>Follow Up</button>} 
+                {enquiry.status === "joined" ? (
+                  <button>Edit</button>
+                ) : (
+                  <button onClick={() => handleFollowUpClick(enquiry)}>Add Follow Up</button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {showPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <h2>Follow Up</h2>
+            <textarea
+              className="popup-textarea"
+              placeholder="Enter follow-up notes"
+              value={followUpNotes}
+              onChange={(e) => setFollowUpNotes(e.target.value)}
+            />
+            <h5>Next Follow Up Date</h5>
+            <input
+              className="popup-input"
+              type="date"
+              value={nextFollowUpDate}
+              onChange={(e) => setNextFollowUpDate(e.target.value)}
+            />
+            <button className="popup-save" onClick={handleSaveFollowUp}>Save</button>
+            <button className="popup-close" onClick={() => setShowPopup(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
-
 };
 
 export default EnquiryStatus;

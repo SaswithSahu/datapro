@@ -6,18 +6,19 @@ const EmployeeList = () => {
     const api = process.env.REACT_APP_API;
     const center = localStorage.getItem("center");
 
+    const fetchEmployees = async () => {
+        try {
+            const response = await fetch(`${api}/employees`);
+            const data = await response.json();
+            console.log(data)
+            const filteredData = data.employees.filter(emp => emp.center === center)
+            setEmployees(filteredData);
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchEmployees = async () => {
-            try {
-                const response = await fetch(`${api}/employees`);
-                const data = await response.json();
-                console.log(data)
-                const filteredData = data.employees.filter(emp => emp.center === center)
-                setEmployees(filteredData);
-            } catch (error) {
-                console.error('Error fetching employees:', error);
-            }
-        };
 
         fetchEmployees();
     }, [api]);
@@ -25,7 +26,7 @@ const EmployeeList = () => {
     const handleDelete = async (id) => {
         const token = localStorage.getItem("jwt_token");
         try {
-            const response = await fetch(`${api}/employees/${id}`, {
+            const response = await fetch(`${api}/delete-employees/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': token,
@@ -33,8 +34,8 @@ const EmployeeList = () => {
             });
 
             if (response.ok) {
-                setEmployees(employees.filter(employee => employee.id !== id));
                 alert('Employee deleted successfully');
+                fetchEmployees();
             } else {
                 alert('Failed to delete employee');
             }
@@ -56,13 +57,13 @@ const EmployeeList = () => {
                 </thead>
                 <tbody>
                     {employees.map(employee => (
-                        <tr key={employee.id} className="employee-table-row">
+                        <tr key={employee._id} className="employee-table-row">
                             <td className="employee-table-cell">{employee.username}</td>
                             <td className="employee-table-cell">{employee.role}</td>
                             <td className="employee-table-cell">
                                 <button
                                     className="employee-table-delete-button"
-                                    onClick={() => handleDelete(employee.id)}
+                                    onClick={() => handleDelete(employee._id)}
                                 >
                                     Delete
                                 </button>

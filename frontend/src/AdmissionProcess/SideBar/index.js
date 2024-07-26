@@ -4,6 +4,7 @@ import AdmissionForm from '../Form';
 import SearchEnroll from '../SearchEnroll';
 import EnquiryStatus from '../EnquiryStatus';
 import AllCenterCourses from '../../AllCenterCourses';
+import Remainders from '../Remainders';
 
 const AdmissionSidebar = () => {
     const {id} = useParams()
@@ -47,6 +48,10 @@ const AdmissionSidebar = () => {
                                 <a href="/admission-process/courses" className="nav-link px-0 align-middle">
                                     <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Courses</span> </a>
                             </li>
+                            <li>
+                                <a href="/admission-process/remainders" className="nav-link px-0 align-middle">
+                                    <i className="fs-4 bi-people"></i> <span className="ms-1 d-none d-sm-inline">Remainders</span> </a>
+                            </li>
 
                         </ul>
                         <hr />
@@ -60,6 +65,7 @@ const AdmissionSidebar = () => {
                  {id === 'search-enroll' && <SearchEnroll/>}
                  {id === "enquiry-status" && <EnquiryStatus/>}
                  {id === 'courses' && <AllCenterCourses/>}
+                 {id === 'remainders' && <Remainders/>}
                 </div>
             </div>
         </div>
