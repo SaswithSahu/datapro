@@ -359,7 +359,8 @@ app.post('/register-employee', authenticateToken,async (req, res) => {
   try {
 
     const center = req.user.center;
-      const existingEmployee = await Employee.findOne({ username });
+      const existingEmployee = await Employee.findOne({ username:username,center:center });
+
       if (existingEmployee) {
           return res.status(400).send('Username already exists');
       }

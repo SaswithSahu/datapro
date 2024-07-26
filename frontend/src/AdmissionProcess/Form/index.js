@@ -18,7 +18,7 @@ const AdmissionForm = () => {
         formData.append(key, data[key]);
       }
     }
-    formData.append("centerName",localStorage.getItem("center"));
+    formData.append("centerName", localStorage.getItem("center"));
     if (id !== "form") {
       formData.append("enrolledId", id);
     }
@@ -26,7 +26,6 @@ const AdmissionForm = () => {
       const token = localStorage.getItem("jwt_token");
       const response = await fetch(`${api}/admissions`, {
         method: 'POST',
-
         headers: {
           'Authorization': token,
         },
@@ -59,16 +58,6 @@ const AdmissionForm = () => {
           {errors.IdNo && <span className="error">ID No is required</span>}
         </div>
 
-        {/* <div className="form-group">
-          <label htmlFor="center">Center*</label>
-          <select id="center" className="input-field" {...register('centerName', { required: true })}>
-            <option value="DWK">DWK</option>
-            <option value="MVP">MVP</option>
-            <option value="GWK">GWK</option>
-          </select>
-          {errors.centerName && <span className="error">Center is required</span>}
-        </div> */}
-
         <div className="form-group">
           <label htmlFor="name">Name*</label>
           <input type="text" id="name" className="input-field" {...register('name', { required: true })} />
@@ -99,14 +88,28 @@ const AdmissionForm = () => {
 
         <div className="form-group">
           <label htmlFor="aadharNo">Aadhar No*</label>
-          <input type="text" id="aadharNo" className="input-field" {...register('aadharNo', { required: true })} />
-          {errors.aadharNo && <span className="error">Aadhar No is required</span>}
+          <input type="text" id="aadharNo" className="input-field" 
+                 {...register('aadharNo', { 
+                   required: true,
+                   maxLength: 12,
+                   pattern: /^[0-9]+$/
+                 })} />
+          {errors.aadharNo && <span className="error">
+            {errors.aadharNo.type === 'maxLength' ? 'Aadhar No must be 12 digits' : 'Aadhar No is required and should be numeric'}
+          </span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="mobileNo">Mobile No*</label>
-          <input type="text" id="mobileNo" className="input-field" {...register('mobileNo', { required: true })} />
-          {errors.mobileNo && <span className="error">Mobile No is required</span>}
+          <input type="text" id="mobileNo" className="input-field" 
+                 {...register('mobileNo', { 
+                   required: true,
+                   maxLength: 10,
+                   pattern: /^[0-9]+$/
+                 })} />
+          {errors.mobileNo && <span className="error">
+            {errors.mobileNo.type === 'maxLength' ? 'Mobile No must be 10 digits' : 'Mobile No is required and should be numeric'}
+          </span>}
         </div>
 
         <div className="form-group">
