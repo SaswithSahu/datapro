@@ -14,10 +14,12 @@ import EmployeeLoginForm from "./EmployeeLoginForm"
 import MdLogin from "./MDModule/MdLogin"
 import AdmissionTable from "./MDModule/AdmissionTable"
 import AdminNavbar from "./AdminModule/AdminNavbar"
-import RevenueChart from "./MDModule/Revenue"
-import AllCourses from "./CenterManagers/AllCourses"
-import CenterCourses from "./CenterManagers/CenterCourses"
+// import RevenueChart from "./MDModule/Revenue"
+// import AllCourses from "./CenterManagers/AllCourses"
+// import CenterCourses from "./CenterManagers/CenterCourses"
 import AllCenterCourses from "./AllCenterCourses"
+import WalkIns from "./Walkins"
+import WalkinInfo from "./WalkinInfo"
 
 
 
@@ -40,6 +42,8 @@ const App = () =>{
       <Route path = "/navbar/:id" element = {<Sidebar/>}/>
       <Route path = "/md-login" element = {<MdLogin/>}/>
       <Route path = "/admissions/:id" element={<AdmissionTable/>}/>
+      <Route path = "/walk-ins" element = {<WalkIns/>}/>
+      <Route path = "/co" element = {<WalkinInfo/>}/>
 
    </Routes>
   </BrowserRouter>

@@ -179,7 +179,7 @@ const EnquiryStatus = () => {
               <td className="studentJoinStatus-td">{enquiry.mobile}</td>
               <td className="studentJoinStatus-td">
                 {enquiry.status === "joined" ? (
-                  <button>Edit</button>
+                  <h6>JOINED</h6>
                 ) : (
                   <button onClick={() => handleFollowUpClick(enquiry)}>Add Follow Up</button>
                 )}

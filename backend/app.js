@@ -13,6 +13,7 @@ const Fees = require("./model/Fees")
 const Course = require("./model/Course");
 const CenterCourse = require("./model/centerCourseSchema");
 const { FollowUp } = require('./model/FollowUp'); 
+const Walkin = require('./model/Walkin')
 const path = require('path');
 
 const app = express();
@@ -44,7 +45,6 @@ const authenticateToken = (req, res, next) => {
   jwt.verify(token, "jwt-secret", (err, user) => {
       if (err) return res.status(403).send('Invalid Token');
       req.user = user;
-      console.log(user)
       next();
   });
 };
@@ -792,6 +792,27 @@ app.get("/all-remainders", async (req, res) => {
     res.status(201).json({ data: latestRemarks });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+
+app.post('/walkins', async (req, res) => {
+  try {
+    const walkin = new Walkin(req.body);
+    await walkin.save();
+    res.status(201).send(walkin);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
+app.get('/walkins', async (req, res) => {
+  try {
+    const walkins = await Walkin.find();
+    res.status(200).json(walkins);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching walkin data' });
   }
 });
 
