@@ -143,3 +143,74 @@
     background-color: #218838;
   }
   
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    overflow-y: auto; /* Ensure content is scrollable if it overflows */
+  }
+  
+  .close-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .enroll-form .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .enroll-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .enroll-form input,
+  .enroll-form select,
+  .enroll-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .enroll-form .required {
+    color: red;
+  }
+  
+  .enroll-form .error {
+    color: red;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .submit-btn {
+    padding: 0.75rem 1.5rem;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  

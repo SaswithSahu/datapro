@@ -208,13 +208,13 @@ const ProjectAdmission = () => {
         <select {...register('projectCategory', { required: true })}>
           <option value="">Select Category</option>
           <option value="Blockchain">Blockchain</option>
+          <option value="Web Designing">Web Designing</option>
           <option value="Machine Learning">Machine Learning</option>
           <option value="Artificial Intelligence">Artificial Intelligence</option>
           <option value="Deep Learning">Deep Learning</option>
           <option value="Cyber Security">Cyber Security</option>
           <option value="Networking">Networking</option>
           <option value="Cloud Computing">Cloud Computing</option>
-          <option value="Web Designing">Web Designing</option>
           <option value="IoT">IoT</option>
         </select>
         {errors.projectCategory && <p className="error">Project Category is required</p>}
