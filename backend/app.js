@@ -14,6 +14,8 @@ const Course = require("./model/Course");
 const CenterCourse = require("./model/centerCourseSchema");
 const { FollowUp } = require('./model/FollowUp'); 
 const Walkin = require('./model/Walkin')
+const ProjectAdmission = require('./model/ProjectAdmission');
+const ProjectStatus = require('./model/ProjectStatus');
 const path = require('path');
 
 const app = express();
@@ -409,11 +411,9 @@ app.post('/login-employee', async (req, res) => {
 
 app.delete("/delete-employees/:id",async(req, res) => {
   const {id} = req.params
-  console.log(id)
   try{
     const d = await Employee.findByIdAndDelete({ _id:id });
     res.status(201).json("Deleted Successful")
-    console.log("deleted",d)
   }catch(e){
     res.status(500).json("Failed To Delete")
     console.log(e)
@@ -756,8 +756,6 @@ app.post('/add-follow-up', async (req, res) => {
   }
 });
 
-
-
 app.get('/followup-remainders', async (req, res) => {
   try {
     const remainders = await getRemainders();
@@ -795,7 +793,6 @@ app.get("/all-remainders", async (req, res) => {
   }
 });
 
-
 app.post('/walkins', async (req, res) => {
   try {
     const walkin = new Walkin(req.body);
@@ -806,7 +803,6 @@ app.post('/walkins', async (req, res) => {
   }
 });
 
-
 app.get('/walkins', async (req, res) => {
   try {
     const walkins = await Walkin.find();
@@ -815,6 +811,117 @@ app.get('/walkins', async (req, res) => {
     res.status(500).json({ message: 'Error fetching walkin data' });
   }
 });
+
+app.post('/project-admissions', async (req, res) => {
+  try {
+    const {
+      projectId,
+      projectName,
+      projectCategory,
+      studentName1,
+      studentName2,
+      phoneNumber1,
+      phoneNumber2,
+      totalFees,
+      feesPaid,
+      guide1,
+      guide2,
+      deadline,
+      status,
+      councillor,
+      remarks,
+      walkIn
+    } = req.body;
+    const newProjectAdmission = new ProjectAdmission({
+      projectId,
+      projectName,
+      projectCategory,
+      studentName1,
+      studentName2,
+      phoneNumber1,
+      phoneNumber2,
+      totalFees,
+      feesPaid,
+      guide1,
+      guide2,
+      deadline,
+      status,
+      councillor,
+      remarks,
+    });
+
+    const savedProjectAdmission = await newProjectAdmission.save();
+    await Walkin.findByIdAndUpdate(walkIn, { status: 'joined' });
+    res.status(201).json(savedProjectAdmission);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+app.get('/project-admissions', async (req, res) => {
+  try {
+    const admissions = await ProjectAdmission.find();
+    res.status(200).json(admissions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+app.put('/project-status', async (req, res) => {
+  const { projectId, completedPercentage, supportRequired, anyProblems, estimatedDateToComplete } = req.body;
+  console.log(req.body)
+
+  if (
+    typeof projectId !== 'string' ||
+    isNaN(Number(completedPercentage)) ||
+    typeof supportRequired !== 'string' ||
+    typeof anyProblems !== 'string' ||
+    !estimatedDateToComplete
+  ) {
+    return res.status(400).json({ error: 'Invalid input data' });
+  }
+
+  const status = {
+    completedPercentage: Number(completedPercentage),
+    supportRequired,
+    anyProblems,
+    estimatedDateToComplete
+  };
+
+  try {
+    const project = await ProjectStatus.findOne({ projectId });
+    if (project) {
+      // Project exists, add new status to statusList
+      project.statusList.push(status);
+      await project.save();
+    } else {
+      // Project does not exist, create a new one
+      const newProject = new ProjectStatus({
+        projectId,
+        statusList: [status]
+      });
+      await newProject.save();
+    }
+    res.status(200).json({ message: 'Status added successfully' });
+  } catch (error) {
+    console.error('Error adding status:', error);
+    res.status(500).json({ error: 'An error occurred while adding status' });
+  }
+});
+
+app.get("/project-status/:id",async(req, res) => {
+  const {id}  = req.params;
+  try{
+    const project = await ProjectStatus.findOne({projectId:id})
+    const status = project.statusList
+    res.status(201).json({status})
+  }catch(e){
+    res.status(500).json({e})
+  }
+})  
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

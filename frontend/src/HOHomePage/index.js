@@ -22,10 +22,10 @@ const HoHomePage = () => {
                         <h1>Managers</h1>
                     </div>
                 </a>
-                <a href="/walk-ins" style={{textDecoration:"none",color:"black"}}>
+                <a href="/project-navbar/enquiry" style={{textDecoration:"none",color:"black"}}>
                     <div className="ho-home-page-card shadow">
                         <IoPersonSharp className="ho-home-page-card-logo"/>
-                        <h1>Walk Ins</h1>
+                        <h1>Projects</h1>
                     </div>
                 </a>
             </div>

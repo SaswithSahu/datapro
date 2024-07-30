@@ -18,8 +18,9 @@ import AdminNavbar from "./AdminModule/AdminNavbar"
 // import AllCourses from "./CenterManagers/AllCourses"
 // import CenterCourses from "./CenterManagers/CenterCourses"
 import AllCenterCourses from "./AllCenterCourses"
-import WalkIns from "./Walkins"
-import WalkinInfo from "./WalkinInfo"
+// import WalkIns from "./Walkins"
+// import WalkinInfo from "./WalkinInfo"
+import ProjectNavBar from "./ProjectsModule/ProjectsNavBar"
 
 
 
@@ -42,8 +43,7 @@ const App = () =>{
       <Route path = "/navbar/:id" element = {<Sidebar/>}/>
       <Route path = "/md-login" element = {<MdLogin/>}/>
       <Route path = "/admissions/:id" element={<AdmissionTable/>}/>
-      <Route path = "/walk-ins" element = {<WalkIns/>}/>
-      <Route path = "/co" element = {<WalkinInfo/>}/>
+      <Route path = "/project-navbar/:id" element = {<ProjectNavBar/>}/>
 
    </Routes>
   </BrowserRouter>

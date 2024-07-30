@@ -110,7 +110,7 @@ const AllCourses = () => {
               <div className="all-courses-details">
                 <h3 className="all-courses-name">{course.courseName}</h3>
                 <p className="all-courses-fees">Fees: {course.courseFees} Rs</p>
-                <p className="all-courses-duration">Duration: {course.courseDuration} days</p>
+                <p className="all-courses-duration">Duration: {course.courseDuration}</p>
                 <button 
                   className="all-courses-add-button" 
                   onClick={() => handleAddClick(course)}

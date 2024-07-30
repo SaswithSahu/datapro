@@ -31,6 +31,10 @@ const walkinSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid 10-digit mobile number!`
     },
   },
+  status:{
+    type: String,
+    default:"not joined"
+  },
   date: {
     type: Date,
     default: Date.now,
