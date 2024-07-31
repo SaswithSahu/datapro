@@ -26,11 +26,11 @@ const admissionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  aadharNo: {
+  aadhar: {
     type: String,
     required: true
   },
-  mobileNo: {
+  mobile: {
     type: String,
     required: true
   },
@@ -46,7 +46,9 @@ const admissionSchema = new mongoose.Schema({
   },
   dateOfJoining: {
     type: Date,
-    required: true
+    required: true,
+    default: Date.now,
+
   },
   totalFees: {
     type: Number,
@@ -71,6 +73,9 @@ const admissionSchema = new mongoose.Schema({
   counselorName: {
     type: String,
     required: true
+  },
+  remarks: {
+    type: String,
   },
 }, {
   timestamps: true

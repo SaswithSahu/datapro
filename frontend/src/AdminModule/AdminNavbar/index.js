@@ -2,6 +2,7 @@ import React,{ useEffect } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
 import PayFees from '../PayFees';
 import FeesRemainders from '../FeesRemainders';
+import DownloadFees from '../DownloadFees';
 
 const AdminNavbar = () => {
     const {id} = useParams()
@@ -38,6 +39,11 @@ const AdminNavbar = () => {
                                     <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Remainders</span>
                                 </a>
                             </li>
+                            <li className="nav-item">
+                                <a href="/admin/download-data" className="nav-link align-middle px-0">
+                                    <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Download</span>
+                                </a>
+                            </li>
                         </ul>
                         <hr />
                         <div className="dropdown pb-4">
@@ -48,7 +54,7 @@ const AdminNavbar = () => {
                 <div className="col py-3" style={{height:"100vh",overflow:"auto"}}>
                  {id === 'pay-fees' && <PayFees/>}
                  {id === 'remainders' && <FeesRemainders/>}
-                 {/* {id === 'search-enroll' && <SearchEnroll/>} */}
+                 {id === 'download-data' && <DownloadFees/>}
                 </div>
             </div>
         </div>

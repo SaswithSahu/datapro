@@ -331,14 +331,14 @@ const EnquiryForm = () => {
           <span className="error">{errors.counselorName}</span>
         )}
       </div>
-      <div className="form-group">
+      {/* <div className="form-group">
         <label>Status:</label>
         <select name="status" value={formData.status} onChange={handleChange}>
           <option value="">Select</option>
           <option value="joined">Joined</option>
           <option value="notJoined">Not Joined</option>
         </select>
-      </div>
+      </div> */}
       <div className="form-group">
         <label>Remarks:</label>
         <textarea

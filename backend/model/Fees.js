@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const termSchema = new Schema({
+  receiptNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   termNumber: {
     type: Number,
     required: true

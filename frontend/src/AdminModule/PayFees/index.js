@@ -7,6 +7,7 @@ const PayFees = () => {
   const [payment, setPayment] = useState(null);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [receiptNumber, setReceiptNumber] = useState("")
   const [amount, setAmount] = useState('');
   const [nextTermDate, setNextTermDate] = useState('');
   const [paymentMode, setPaymentMode] = useState('');
@@ -26,6 +27,7 @@ const PayFees = () => {
   };
 
   const center = localStorage.getItem("center");
+  const token = localStorage.getItem("jwt_token");
 
   const handleButtonClick = async () => {
     setLoading(true);
@@ -52,6 +54,10 @@ const PayFees = () => {
     }
   };
 
+  const handleReceiptNumberChange = (e) =>{
+    setReceiptNumber(e.target.value);
+  }
+
   const handlePayFeesClick = () => {
     setShowModal(true);
   };
@@ -72,9 +78,11 @@ const PayFees = () => {
     setPaymentMode(e.target.value);
   };
 
+
   const handlePayButtonClick = async () => {
     const paymentDetails = {
       IdNo: studentID,
+      receiptNumber:receiptNumber,
       amountPaid: amount,
       nextTermDate,
       modeOfPayment: paymentMode,
@@ -86,6 +94,7 @@ const PayFees = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': token,
         },
         body: JSON.stringify(paymentDetails),
       });
@@ -119,7 +128,7 @@ const PayFees = () => {
       {!student && !loading && !error && <p className="initial-view">Enter the Student ID to get details</p>}
       {student && !loading && (
         <div className="student-card">
-          <img src={`${api}/uploads/${student.image}`} alt={student.name} className="student-pic" />
+          {/* <img src={`${api}/uploads/${student.image}`} alt={student.name} className="student-pic" /> */}
           <div className="student-info">
             <h2 className="student-name">{student.name}</h2>
             <p className="student-course"><strong>Course:</strong> {student.courseEnrolled}</p>
@@ -133,10 +142,19 @@ const PayFees = () => {
         </div>
       )}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="pay-fee-modal-overlay">
           <div className="modal-content">
             <span className="close-modal" onClick={closeModal}>&times;</span>
             <h2>Pay Fees</h2>
+            <div className="modal-input-container">
+              <label className="modal-label">Receipt Number</label>
+              <input
+                type="text"
+                className="modal-input"
+                value={receiptNumber}
+                onChange={handleReceiptNumberChange}
+              />
+            </div>
             <div className="modal-input-container">
               <label className="modal-label">Amount</label>
               <input
@@ -162,6 +180,7 @@ const PayFees = () => {
                 value={paymentMode}
                 onChange={handlePaymentModeChange}
               >
+                <option value = "">Select</option>
                 <option value="Cash">Cash</option>
                 <option value="Credit Card">Credit Card</option>
                 <option value="Debit Card">Debit Card</option>

@@ -6,12 +6,19 @@ const FeesRemainders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const api = process.env.REACT_APP_API;
+  const token = localStorage.getItem("jwt_token");
 
   useEffect(() => {
     const fetchStudents = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${api}/fees-due-today`);
+        const response = await fetch(`${api}/fees-due-today`,{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }

@@ -75,7 +75,7 @@ const AdmissionForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="image">Image*</label>
+          <label htmlFor="image">Image</label>
           <input type="file" id="image" className="input-field" {...register('image')} />
           {errors.image && <span className="error">Image is required</span>}
         </div>
@@ -89,7 +89,7 @@ const AdmissionForm = () => {
         <div className="form-group">
           <label htmlFor="aadharNo">Aadhar No*</label>
           <input type="text" id="aadharNo" className="input-field" 
-                 {...register('aadharNo', { 
+                 {...register('aadhar', { 
                    required: true,
                    maxLength: 12,
                    minLength:12,
@@ -103,7 +103,7 @@ const AdmissionForm = () => {
         <div className="form-group">
           <label htmlFor="mobileNo">Mobile No*</label>
           <input type="text" id="mobileNo" className="input-field" 
-                 {...register('mobileNo', { 
+                 {...register('mobile', { 
                    required: true,
                    maxLength: 10,
                    minLength:10,
@@ -132,11 +132,11 @@ const AdmissionForm = () => {
           {errors.courseEnrolled && <span className="error">Course is required</span>}
         </div>
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="dateOfJoining">Date of Joining*</label>
           <input type="date" id="dateOfJoining" className="input-field" {...register('dateOfJoining', { required: true })} />
           {errors.dateOfJoining && <span className="error">Date of Joining is required</span>}
-        </div>
+        </div> */}
 
         <div className="form-group">
           <label htmlFor="totalFees">Total Fees*</label>
@@ -170,6 +170,11 @@ const AdmissionForm = () => {
             <option value="Evening">Evening</option>
           </select>
           {errors.timings && <span className="error">Timings are required</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="remarks">Remarks</label>
+          <textarea id="remarks" {...register('remarks')} rows={10} cols={70} />
         </div>
 
         <button type="submit" className="admission-submit-button">Submit</button>

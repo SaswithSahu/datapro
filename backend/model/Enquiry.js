@@ -71,7 +71,8 @@ const enquirySchema = new Schema({
   },
   status: {
     type: String,
-    required: true
+    required: true,
+    default:"notJoined"
   },
   remarks: {
     type: String,

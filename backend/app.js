@@ -1,12 +1,13 @@
 const express = require('express');
+const excel = require('exceljs');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Enquiry = require('./model/Enquiry');
 const Admission = require("./model/Admission");
-const jwt = require('jsonwebtoken');
 const Manager = require('./model/Manager');
 const Employee = require('./model/Employee');
 const Fees = require("./model/Fees")
@@ -106,6 +107,13 @@ const getRemainders = async () => {
   }
 };
 
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 app.post('/enquiries',authenticateToken, async (req, res) => {
   try {
@@ -179,12 +187,13 @@ app.post('/enquiries',authenticateToken, async (req, res) => {
 app.get('/student-details',authenticateToken,async (req, res) => {
   try {
     const { mobile, aadhar } = req.query;
-
+    console.log()
     if (!mobile && !aadhar) {
       return res.status(400).json({ error: 'Please provide either mobile or aadhar number' });
     }
     const query = mobile ? { mobile } : { aadhar };
     const user = await Enquiry.find(query);
+    console.log(user)
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -200,6 +209,16 @@ app.get('/enquiries',async (req, res) => {
   try {
       const enquiries = await Enquiry.find({});
       res.status(200).json(enquiries);
+  } catch (err) {
+      res.status(500).json({ message: 'Error fetching enquiries', error: err });
+  }
+});
+app.get('/enquiry/:id',async (req, res) => {
+    const {id} = req.params
+  try {
+      const enquiry = await Enquiry.findById({_id:id});
+      console.log(enquiry)
+      res.status(200).json(enquiry);
   } catch (err) {
       res.status(500).json({ message: 'Error fetching enquiries', error: err });
   }
@@ -279,14 +298,13 @@ app.post('/manager-login', async (req, res) => {
 
 app.get('/getDetails',authenticateToken,async (req, res) => {
   const { mobile } = req.query;
-
   if (!mobile) {
     return res.status(400).json('Mobile number is required');
   }
 
   try {
     const enquiries = await Enquiry.find({ mobile });
-    const filteredEnquiries = enquiries.filter(e => e.centerName === req.user.center)
+    const filteredEnquiries = enquiries.filter(e => e.centerName === req.user.center  && e.counselorName.toLowerCase() === req.user.name.toLowerCase());
     if (filteredEnquiries.length === 0) {
       return res.status(400).json('No data found for the provided mobile number');
     }
@@ -301,29 +319,27 @@ app.get('/getDetails',authenticateToken,async (req, res) => {
 app.post('/admissions',authenticateToken,upload.single('image'), async (req, res) => {
   try {
     const {
-      IdNo, centerName, name, gender, address, aadharNo,
-      mobileNo, email, others, courseEnrolled, dateOfJoining,
-      totalFees, durationOfCourse, feeDueDate, trainer, timings, enrolledId
+      IdNo, centerName, name, gender, address, aadhar,
+      mobile, email, others, courseEnrolled,
+      totalFees, durationOfCourse, feeDueDate, trainer, timings,remarks,enrolledId
     } = req.body;
-
-
     const newAdmissionData = {
       IdNo,
       centerName,
       name,
       gender,
       address,
-      aadharNo,
-      mobileNo,
+      aadhar,
+      mobile,
       email,
       others,
       courseEnrolled,
-      dateOfJoining,
       totalFees,
       durationOfCourse,
       feeDueDate,
       trainer,
       counselorName :req.user.name,
+      remarks,
       timings
     };
 
@@ -434,6 +450,7 @@ app.get("/student/:id",async(req,res) => {
   try{
     const admission = await Admission.findOne({ IdNo:id })
     const feesDetails = await Fees.findOne({ IdNo:id })
+    console.log()
     if(!admission){
       return res.status(501).json("student not found")
     }
@@ -444,7 +461,7 @@ app.get("/student/:id",async(req,res) => {
 })
 
 app.post('/pay-fees', async (req, res) => {
-  const { IdNo, amountPaid, modeOfPayment, nextTermDate, center } = req.body;
+  const { IdNo, receiptNumber, amountPaid, modeOfPayment, nextTermDate, center } = req.body;
   if (!IdNo || !amountPaid || !modeOfPayment || !nextTermDate || !center) {
     return res.status(400).json({ error: 'All fields are required' });
   }
@@ -464,7 +481,7 @@ app.post('/pay-fees', async (req, res) => {
         : 0;
       const newTermNumber = lastTermNumber + 1;
 
-      fees.terms.push({ termNumber: newTermNumber, amountPaid, modeOfPayment });
+      fees.terms.push({ receiptNumber,termNumber: newTermNumber, amountPaid, modeOfPayment });
       fees.nextTermDate = nextTermDate;
       const totalPaid = fees.terms.reduce((total, term) => total + term.amountPaid, 0);
 
@@ -476,7 +493,7 @@ app.post('/pay-fees', async (req, res) => {
 
       fees = new Fees({
         IdNo,
-        terms: [{ termNumber: 1, amountPaid, modeOfPayment }],
+        terms: [{receiptNumber, termNumber: 1, amountPaid, modeOfPayment }],
         nextTermDate,
         totalStatus,
         center
@@ -922,6 +939,139 @@ app.get("/project-status/:id",async(req, res) => {
   }
 })  
 
+app.get('/fees-today',authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999));
+    const center = req.user.center
+
+    const fees = await Fees.find({
+      'terms.datePaid': { $gte: todayStart, $lte: todayEnd }
+    });
+
+    const studentIds = fees.map(fee => fee.IdNo);
+    const admissions = await Admission.find({ IdNo: { $in: studentIds },centerName:center});
+
+    const data = admissions.map(admission => {
+      const feeRecord = fees.find(fee => fee.IdNo === admission.IdNo);
+      const totalPaidFees = feeRecord.terms.reduce((sum, term) => sum + term.amountPaid, 0);
+      const remainingFees = admission.totalFees - totalPaidFees;
+      const nextTermDate = feeRecord.nextTermDate;
+
+      return {
+        IdNo: admission.IdNo,
+        name: admission.name,
+        gender: admission.gender,
+        address: admission.address,
+        aadhar: admission.aadhar,
+        mobile: admission.mobile,
+        email: admission.email,
+        courseEnrolled: admission.courseEnrolled,
+        dateOfJoining: formatDate(admission.dateOfJoining),
+        totalFees: admission.totalFees,
+        durationOfCourse: admission.durationOfCourse,
+        timings: admission.timings,
+        totalPaidFees,
+        remainingFees,
+        nextTermDate: formatDate(nextTermDate),
+      };
+    });
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).send('Server Error');
+  }
+});
+
+
+app.get('/download-fees-today',authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999));
+    const center = req.user.center;
+
+    const fees = await Fees.find({
+      'terms.datePaid': { $gte: todayStart, $lte: todayEnd }
+    });
+    const studentIds = fees.map(fee => fee.IdNo);
+    const admissions = await Admission.find({ IdNo: { $in: studentIds },centerName:center});
+
+    const data = admissions.map(admission => {
+      const feeRecord = fees.find(fee => fee.IdNo === admission.IdNo);
+      const totalPaidFees = feeRecord.terms.reduce((sum, term) => sum + term.amountPaid, 0);
+      const remainingFees = admission.totalFees - totalPaidFees;
+      const nextTermDate = feeRecord.nextTermDate;
+      const receiptNumber = feeRecord.terms[0].receiptNumber;
+      const amountPaid = feeRecord.terms[0].amountPaid
+
+
+
+      return {
+        IdNo: admission.IdNo,
+        receiptNumber,
+        amountPaid,
+        name: admission.name,
+        gender: admission.gender,
+        address: admission.address,
+        aadhar: admission.aadhar,
+        mobile: admission.mobile,
+        email: admission.email,
+        courseEnrolled: admission.courseEnrolled,
+        dateOfJoining: formatDate(admission.dateOfJoining),
+        totalFees: admission.totalFees,
+        durationOfCourse: admission.durationOfCourse,
+        timings: admission.timings,
+        totalPaidFees,
+        remainingFees,
+        nextTermDate: formatDate(nextTermDate),
+      };
+    });
+
+    const workbook = new excel.Workbook();
+    const worksheet = workbook.addWorksheet('Fees Today');
+
+    worksheet.columns = [
+      { header: 'ID No', key: 'IdNo', width: 15 },
+      { header: 'Receipt No', key: 'receiptNumber', width: 15 },
+      { header: 'Amount Paid', key: 'amountPaid', width: 15 },
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Gender', key: 'gender', width: 10 },
+      { header: 'Address', key: 'address', width: 25 },
+      { header: 'Aadhar', key: 'aadhar', width: 20 },
+      { header: 'Mobile', key: 'mobile', width: 15 },
+      { header: 'Email', key: 'email', width: 25 },
+      { header: 'Course Enrolled', key: 'courseEnrolled', width: 20 },
+      { header: 'Date of Joining', key: 'dateOfJoining', width: 15 },
+      { header: 'Total Fees', key: 'totalFees', width: 10 },
+      { header: 'Duration of Course', key: 'durationOfCourse', width: 15 },
+      { header: 'Timings', key: 'timings', width: 15 },
+      { header: 'Total Paid Fees', key: 'totalPaidFees', width: 15 },
+      { header: 'Remaining Fees', key: 'remainingFees', width: 15 },
+      { header: 'Next Term Date', key: 'nextTermDate', width: 15 },
+    ];
+
+    worksheet.addRows(data);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=' + 'fees-today.xlsx'
+    );
+
+    res.send(buffer);
+    console.log("hello");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
