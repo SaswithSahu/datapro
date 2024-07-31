@@ -14,6 +14,13 @@ const JoinedAdmission = () => {
     estimatedDateToComplete: '',
   });
   const [viewDetailsPopup, setViewDetailsPopup] = useState(null);
+  const [filters, setFilters] = useState({
+    projectCategory: '',
+    guide: '',
+    fromDate: '',
+    toDate: '',
+    searchQuery: '',
+  });
   const api = process.env.REACT_APP_API;
 
   useEffect(() => {
@@ -52,7 +59,6 @@ const JoinedAdmission = () => {
       const response = await fetch(`${api}/project-status/${admission.projectId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data.status)
         setViewDetailsPopup(data.status);
       } else {
         setError('Failed to fetch project status details');
@@ -101,6 +107,26 @@ const JoinedAdmission = () => {
     }
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const filteredAdmissions = admissions.filter((admission) => {
+    const { projectCategory, guide, fromDate, toDate, searchQuery } = filters;
+
+    return (
+      (projectCategory === '' || admission.projectCategory === projectCategory) &&
+      (guide === '' || admission.guide1.toLowerCase() === guide.toLowerCase() || admission.guide2.toLowerCase() === guide.toLowerCase()) &&
+      (fromDate === '' || new Date(admission.deadline) >= new Date(fromDate)) &&
+      (toDate === '' || new Date(admission.deadline) <= new Date(toDate)) &&
+      (searchQuery === '' || admission.projectName.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  });
+
   if (loading) {
     return <p className="project-admission-loading">Loading...</p>;
   }
@@ -109,12 +135,68 @@ const JoinedAdmission = () => {
     return <p className="project-admission-error">{error}</p>;
   }
 
+
   return (
     <div className="project-admission-container">
       <div className="project-admission-header">
         <h1>Project Admissions</h1>
+        <p className="project-admission-count">Total Projects: {filteredAdmissions.length}</p>
       </div>
-      {admissions.length === 0 ? (
+      <div className="project-admission-filters">
+        <input
+          type="text"
+          name="searchQuery"
+          placeholder="Search by Project Title"
+          value={filters.searchQuery}
+          onChange={handleFilterChange}
+          className="filter-input"
+        />
+        <select
+          name="projectCategory"
+          value={filters.projectCategory}
+          onChange={handleFilterChange}
+          className="filter-select"
+        >
+          <option value="">All Categories</option>
+          <option value="Blockchain">Blockchain</option>
+          <option value="Web Designing">Web Designing</option>
+          <option value="Machine Learning">Machine Learning</option>
+          <option value="Artificial Intelligence">Artificial Intelligence</option>
+          <option value="Deep Learning">Deep Learning</option>
+          <option value="Cyber Security">Cyber Security</option>
+          <option value="Networking">Networking</option>
+          <option value="Cloud Computing">Cloud Computing</option>
+          <option value="IoT">IoT</option>
+        </select>
+        <select
+          name="guide"
+          value={filters.guide}
+          onChange={handleFilterChange}
+          className="filter-select"
+        >
+          <option value="">All Guides</option>
+          <option value = "vijay">Vijay</option>
+          <option value="deepak">Deepak</option>
+          <option value = "haribabu">Hari Babu</option>
+          <option value = "srikanth">Srikanth</option>
+          <option value = "saswith">Saswith</option>
+        </select>
+        <input
+          type="date"
+          name="fromDate"
+          value={filters.fromDate}
+          onChange={handleFilterChange}
+          className="filter-input"
+        />
+        <input
+          type="date"
+          name="toDate"
+          value={filters.toDate}
+          onChange={handleFilterChange}
+          className="filter-input"
+        />
+      </div>
+      {filteredAdmissions.length === 0 ? (
         <p className="project-admission-no-data">NO DATA</p>
       ) : (
         <table className="project-admission-table">
@@ -138,7 +220,7 @@ const JoinedAdmission = () => {
             </tr>
           </thead>
           <tbody>
-            {admissions.map((admission) => (
+            {filteredAdmissions.map((admission) => (
               <tr key={admission._id}>
                 <td>{admission.projectId}</td>
                 <td>{admission.projectName}</td>
@@ -177,7 +259,7 @@ const JoinedAdmission = () => {
               />
             </label>
             <label>
-              Support Required:
+              Remarks:
               <textarea
                 name="supportRequired"
                 value={popupData.supportRequired}
@@ -209,22 +291,17 @@ const JoinedAdmission = () => {
       {viewDetailsPopup && (
         <div className="chrono-popup">
           <div className="chrono-popup-content">
-            <h2>Project Status Details</h2>
             <Chrono
               items={viewDetailsPopup.map((status) => ({
                 title: new Date(status.date).toLocaleDateString(),
-               }))}
-              mode="VERTICAL">
-                {viewDetailsPopup.map((status) =>(
-                  <div>
-                  <p><strong>Completed Percentage:</strong> {status.completedPercentage}</p>
-                  <p><strong>Support Required:</strong> {status.supportRequired}</p>
-                  <p><strong>Any Problems:</strong> {status.anyProblems}</p>
-                  <p><strong>Estimated Date to Complete:</strong> {new Date(status.estimatedDateToComplete).toLocaleDateString()}</p>
-                </div>
-                ))}
-              </Chrono>
-            <button onClick={handleClosePopup}>Close</button>
+                cardTitle: status.status,
+                cardDetailedText: status.remark,
+              }))}
+              mode="VERTICAL_ALTERNATING"
+            />
+            <button onClick={handleClosePopup} className="chrono-popup-close">
+              Close
+            </button>
           </div>
         </div>
       )}
