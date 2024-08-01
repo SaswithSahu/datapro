@@ -7,6 +7,8 @@ const PayFees = () => {
   const [payment, setPayment] = useState(null);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [paidFees,setPaidFees] = useState(null);
+  const [remainingFees,setRemainingFees] = useState(null);
   const [receiptNumber, setReceiptNumber] = useState("")
   const [amount, setAmount] = useState('');
   const [nextTermDate, setNextTermDate] = useState('');
@@ -44,7 +46,14 @@ const PayFees = () => {
         throw new Error('Student not found');
       }
       setStudent(data.admission);
+     
       setPayment(data.feesDetails);
+      const paid =  data.feesDetails.terms.reduce((pre, curr) => pre + curr.amountPaid, 0)
+      const remaining = data.admission.totalFees - paid;
+
+      setPaidFees(paid);
+      setRemainingFees(remaining);
+
       setError(null);
     } catch (error) {
       setStudent(null);
@@ -67,6 +76,10 @@ const PayFees = () => {
   };
 
   const handleAmountChange = (e) => {
+    if(e.target.value > remainingFees){
+      alert("High Amount")
+      return
+    }
     setAmount(e.target.value);
   };
 
@@ -103,13 +116,18 @@ const PayFees = () => {
       if (!response.ok) {
         throw new Error('Failed to process payment');
       }
-
       alert('Payment successful');
+      setReceiptNumber("")
+      setAmount("")
+      setNextTermDate("")
+      setPaymentMode("")
       closeModal();
     } catch (error) {
       alert(error.message);
     }
   };
+
+
 
   return (
     <div className="student-details-container">
@@ -134,11 +152,19 @@ const PayFees = () => {
             <p className="student-course"><strong>Course:</strong> {student.courseEnrolled}</p>
             <p className="student-timings"><strong>Timings:</strong> {student.timings}</p>
             <p className="student-start-date"><strong>Start Date:</strong> {formatDate(student.dateOfJoining)}</p>
+            <p className='paid-fees'>
+              <strong>Paid Fees:</strong> {paidFees}
+            </p>
+            <p className='paid-fees'>
+              <strong> Remaining Fees:</strong>
+              {remainingFees}
+            </p>
             <p className="student-total-fees"><strong>Total Fees:</strong> {student.totalFees}</p>
             {
               payment ? payment.totalStatus === "completed" ? (<h1 style={{ color: "green", fontFamily: "Roboto" }}>Fees Paid</h1>) : (<button onClick={handlePayFeesClick} className="pay-fees-button">Pay</button>) : (<button onClick={handlePayFeesClick} className="pay-fees-button">Pay</button>)
             }
           </div>
+        
         </div>
       )}
       {showModal && (

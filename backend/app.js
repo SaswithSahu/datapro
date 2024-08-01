@@ -450,7 +450,6 @@ app.get("/student/:id",async(req,res) => {
   try{
     const admission = await Admission.findOne({ IdNo:id })
     const feesDetails = await Fees.findOne({ IdNo:id })
-    console.log()
     if(!admission){
       return res.status(501).json("student not found")
     }
@@ -1003,10 +1002,14 @@ app.get('/download-fees-today',authenticateToken, async (req, res) => {
       const totalPaidFees = feeRecord.terms.reduce((sum, term) => sum + term.amountPaid, 0);
       const remainingFees = admission.totalFees - totalPaidFees;
       const nextTermDate = feeRecord.nextTermDate;
-      const receiptNumber = feeRecord.terms[0].receiptNumber;
-      const amountPaid = feeRecord.terms[0].amountPaid
-
-
+      const today1 = new Date().toISOString().split('T')[0];
+      const filteredPayments = feeRecord.terms.filter(payment => {
+        const paymentDate = payment.datePaid.toISOString().split('T')[0];
+        return paymentDate === today1;
+      });
+      const receiptNumber = filteredPayments[0].receiptNumber;
+      const amountPaid = filteredPayments[0].amountPaid
+      console.log(filteredPayments);
 
       return {
         IdNo: admission.IdNo,

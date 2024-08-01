@@ -17,6 +17,7 @@ import AdminNavbar from "./AdminModule/AdminNavbar"
 import AllCenterCourses from "./AllCenterCourses"
 import ProjectNavBar from "./ProjectsModule/ProjectsNavBar"
 import ProjectLogin from "./ProjectsModule/ProjectLogin"
+import ProjectDashboard from "./ProjectsModule/Dashboard"
 
 
 
@@ -28,7 +29,7 @@ const App = () =>{
       <Route path = "/center-home/:id" element = {<CenterHomePage/>}/>
       <Route path = "/ho-home" element = {<HoHomePage/>}/>
       <Route path = "/admin/:id" element = {<AdminNavbar/>}/>
-      <Route path = "/demo" element = {<AllCenterCourses/>}/>
+      <Route path = "/demo" element = {<ProjectDashboard/>}/>
       <Route path = "/center/:id" element = {<EnquiryTable/>}/>
       <Route path = "/md-navbar/:id" element = {<MDSidebar/>}/>
       <Route path = "/manager-login" element = {<Login/>}/>

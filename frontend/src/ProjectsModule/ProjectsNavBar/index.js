@@ -3,6 +3,7 @@ import { useParams,useNavigate } from 'react-router-dom';
 import WalkIns from '../Walkins';
 import ProjectAdmission from '../Admission';
 import JoinedAdmission from '../JoinedAdmissions';
+import ProjectDashboard from '../Dashboard';
 
 
 const ProjectNavBar = () => {
@@ -36,8 +37,8 @@ const ProjectNavBar = () => {
                                 </a>
                             </li>
                             <li className="nav-item">
-                                <a href="/project-navbar/reviews" className="nav-link align-middle px-0">
-                                    <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Developers</span>
+                                <a href="/project-navbar/dashboard" className="nav-link align-middle px-0">
+                                    <i className="fs-4 bi-house"></i> <span className="ms-1 d-none d-sm-inline">Dashboard</span>
                                 </a>
                             </li>
                             
@@ -52,6 +53,7 @@ const ProjectNavBar = () => {
                 {id === "enquiry" && <WalkIns/>}
                 {id === "admission" && <ProjectAdmission/>}
                 {id === "reviews" && <JoinedAdmission/>}
+                {id === "dashboard" && <ProjectDashboard/>}
                 </div>
             </div>
         </div>
