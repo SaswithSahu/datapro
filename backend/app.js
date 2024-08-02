@@ -133,7 +133,6 @@ app.post('/enquiries',authenticateToken, async (req, res) => {
       courseFee,
       counselorName,
       centerName,
-      status,
       remarks
     } = req.body;
 
@@ -157,7 +156,6 @@ app.post('/enquiries',authenticateToken, async (req, res) => {
       courseFee,
       counselorName,
       centerName,
-      status,
       remarks
     };
 

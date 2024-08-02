@@ -75,7 +75,16 @@ const ProjectDashboard = () => {
     }
     return acc;
   }, {});
-  
+
+  const councillorAmounts = data.reduce((acc, project) => {
+    const { councillor, feesPaid, totalFees } = project;
+    if (!acc[councillor]) {
+      acc[councillor] = { collected: 0, pending: 0 };
+    }
+    acc[councillor].collected += feesPaid;
+    acc[councillor].pending += (totalFees - feesPaid);
+    return acc;
+  }, {});
 
   return (
     <div className="project-dashboard">
@@ -84,16 +93,11 @@ const ProjectDashboard = () => {
         <div className="project-dashboard__stat-box">Completed Projects: {completedProjects}</div>
         <div className="project-dashboard__stat-box">Total Amount Received: ₹{totalAmountReceived}</div>
       </div>
+
       <div className="project-dashboard__filters">
-        {/* <select name="councillor" value={filters.councillor} onChange={handleFilterChange}>
-          <option value="">Select Councillor</option>
-          {councillors.map((councillor, index) => (
-            <option key={index} value={councillor}>{councillor}</option>
-          ))}
-        </select> */}
+        {/* Filters section */}
       </div>
 
-      {/* Project Categories Table and Bar Graph */}
       <div className="project-dashboard__councillor-projects">
         <div className="project-dashboard__bar-graph">
           <Bar
@@ -124,6 +128,7 @@ const ProjectDashboard = () => {
             }}
           />
         </div>
+
         <div className="project-dashboard__categories">
           <table>
             <thead>
@@ -144,8 +149,41 @@ const ProjectDashboard = () => {
         </div>
       </div>
 
+      <div className="project-dashboard__councillor-amounts">
+        <Bar
+          data={{
+            labels: Object.keys(councillorAmounts),
+            datasets: [
+              {
+                label: 'Collected Amount',
+                data: Object.values(councillorAmounts).map(amount => amount.collected),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              },
+              {
+                label: 'Pending Amount',
+                data: Object.values(councillorAmounts).map(amount => amount.pending),
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+              },
+            ],
+          }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(tooltipItem) {
+                    return `${tooltipItem.label}: ₹${tooltipItem.raw}`;
+                  }
+                }
+              }
+            }
+          }}
+        />
+      </div>
 
-      {/* Pie Chart for Amounts */}
       <div className="project-dashboard__amounts">
         <Pie
           data={{
@@ -161,7 +199,6 @@ const ProjectDashboard = () => {
         />
       </div>
 
-      {/* Bar Chart for Guide Projects */}
       <div className="project-dashboard__guides">
         <Bar
           data={{
@@ -177,14 +214,13 @@ const ProjectDashboard = () => {
         />
       </div>
 
-      {/* Pie Chart for Selected Guide's Project Status */}
       <div className="project-dashboard__guide-status">
         <div className="project-dashboard__filters">
           <select name="guide" value={filters.guide} onChange={handleFilterChange}>
             <option value="">Select Guide</option>
             {guides.map((guide, index) => (
-            <option key={index} value={guide}>{guide}</option>
-          ))}
+              <option key={index} value={guide}>{guide}</option>
+            ))}
           </select>
         </div>
         <div className="project-dashboard__guide-status-chart">
@@ -221,7 +257,7 @@ const ProjectDashboard = () => {
           />
         </div>
       </div>
-      {/* Line Chart for Fees Collection Over Time */}
+
       <div className="project-dashboard__fees-timeline">
         <Line
           data={{
