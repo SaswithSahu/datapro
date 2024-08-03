@@ -60,6 +60,7 @@ const JoinedAdmission = () => {
       if (response.ok) {
         const data = await response.json();
         setViewDetailsPopup(data.status);
+        console.log(data)
       } else {
         setError('Failed to fetch project status details');
       }
@@ -205,9 +206,7 @@ const JoinedAdmission = () => {
               <th>Project ID</th>
               <th>Project Name</th>
               <th>Student Name 1</th>
-              <th>Student Name 2</th>
               <th>Phone Number 1</th>
-              <th>Phone Number 2</th>
               <th>Total Fees</th>
               <th>Fees Paid</th>
               <th>Guide 1</th>
@@ -215,7 +214,6 @@ const JoinedAdmission = () => {
               <th>Deadline</th>
               <th>Status</th>
               <th>Councillor</th>
-              <th>Remarks</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -225,9 +223,7 @@ const JoinedAdmission = () => {
                 <td>{admission.projectId}</td>
                 <td>{admission.projectName}</td>
                 <td>{admission.studentName1}</td>
-                <td>{admission.studentName2}</td>
                 <td>{admission.phoneNumber1}</td>
-                <td>{admission.phoneNumber2}</td>
                 <td>{admission.totalFees}</td>
                 <td>{admission.feesPaid}</td>
                 <td>{admission.guide1}</td>
@@ -235,7 +231,6 @@ const JoinedAdmission = () => {
                 <td>{new Date(admission.deadline).toLocaleDateString()}</td>
                 <td>{admission.status}</td>
                 <td>{admission.councillor}</td>
-                <td>{admission.remarks}</td>
                 <td>
                   <button onClick={() => handleUpdateClick(admission)} style={{ marginBottom: "10px" }}>Update</button>
                   <button onClick={() => handleViewDetailsClick(admission)}>View Details</button>
@@ -283,8 +278,8 @@ const JoinedAdmission = () => {
                 onChange={handleChange}
               />
             </label>
+            <button className="project-admission-popup-close" onClick={handleClosePopup}  style={{margin:"10px"}}>Close</button>
             <button onClick={handleSave}>Save</button>
-            <button onClick={handleClosePopup}>Close</button>
           </div>
         </div>
       )}
@@ -292,16 +287,19 @@ const JoinedAdmission = () => {
         <div className="chrono-popup">
           <div className="chrono-popup-content">
             <Chrono
-              items={viewDetailsPopup.map((status) => ({
-                title: new Date(status.date).toLocaleDateString(),
-                cardTitle: status.status,
-                cardDetailedText: status.remark,
-              }))}
-              mode="VERTICAL_ALTERNATING"
-            />
-            <button onClick={handleClosePopup} className="chrono-popup-close">
-              Close
-            </button>
+              items={viewDetailsPopup}
+              mode="VERTICAL"
+              theme={{ primary: 'blue', secondary: 'yellow' }}
+            >
+              {viewDetailsPopup.map((status, index) => (
+            <div key={index}>
+              <p><strong>Completed Percentage:</strong> {status.completedPercentage}</p>
+              <p><strong>Remarks:</strong> {status.supportRequired}</p>
+              <p><strong>Problems:</strong> {status.anyProblems}</p>
+            </div>
+          ))}
+            </Chrono>
+            <button className="chrono-popup-close" onClick={handleClosePopup}>Close</button>
           </div>
         </div>
       )}
