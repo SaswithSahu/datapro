@@ -73,3 +73,23 @@
       transform: translateY(0);
     }
   }
+  .studentJoinStatus-search {
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .studentJoinStatus-filters {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .studentJoinStatus-filter {
+    margin-right: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  

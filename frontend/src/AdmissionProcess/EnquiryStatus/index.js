@@ -9,7 +9,8 @@ const EnquiryStatus = () => {
   const [joinedCount, setJoinedCount] = useState(0);
   const [notJoinedCount, setNotJoinedCount] = useState(0);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('today');
+  const [dateFilter, setDateFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -50,7 +51,7 @@ const EnquiryStatus = () => {
 
   useEffect(() => {
     filterEnquiries();
-  }, [statusFilter, dateFilter, startDate, endDate]);
+  }, [statusFilter, dateFilter, searchTerm, startDate, endDate]);
 
   const filterEnquiries = () => {
     let filtered = enquiries;
@@ -78,6 +79,12 @@ const EnquiryStatus = () => {
       const start = new Date(startDate);
       const end = new Date(endDate);
       filtered = filtered.filter(enquiry => new Date(enquiry.date) >= start && new Date(enquiry.date) <= end);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(enquiry =>
+        enquiry.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
     setFilteredEnquiries(filtered);
@@ -139,6 +146,13 @@ const EnquiryStatus = () => {
   return (
     <div className="studentJoinStatus-container">
       <div className="studentJoinStatus-filters">
+        <input
+          type="text"
+          className="studentJoinStatus-search"
+          placeholder="Search by student name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <select className="studentJoinStatus-filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="all">All</option>
           <option value="joined">Joined</option>
