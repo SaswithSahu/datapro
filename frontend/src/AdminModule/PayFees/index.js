@@ -46,9 +46,9 @@ const PayFees = () => {
         throw new Error('Student not found');
       }
       setStudent(data.admission);
-     
-      setPayment(data.feesDetails);
-      const paid =  data.feesDetails.terms.reduce((pre, curr) => pre + curr.amountPaid, 0)
+      if(data.feesDetails !== null)
+        setPayment(data.feesDetails);
+      const paid =  data.feesDetails !== null ?(data.feesDetails.terms.reduce((pre, curr) => pre + curr.amountPaid, 0)):0
       const remaining = data.admission.totalFees - paid;
 
       setPaidFees(paid);
